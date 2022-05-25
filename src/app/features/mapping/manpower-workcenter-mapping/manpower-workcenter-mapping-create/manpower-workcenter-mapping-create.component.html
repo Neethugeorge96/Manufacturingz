@@ -1,0 +1,247 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Manpower to Workcenter
+    </h1>
+</div>
+<div class="card p-3">
+    <div class="d-flex flex-wrap align-items-baseline mb-2 ">
+        <div class=" align-items-center d-flex form-group col-8">
+
+            <label class="text-nowrap fs-sm pr-1 text-right col-2">Select Workcenter</label>
+            <sup class="text-danger">*</sup>
+            <ejs-dropdownlist class="ml-1 col-4" placeholder="Search a workcenter" [(ngModel)]="workCenterId"
+                (ngModelChange)='onOptionsSelected($event)' [dataSource]='workCenter' popupHeight='150px'
+                floatLabelType='Never' [fields]="{text: 'workCenterName', value: 'id' }" [allowFiltering]='true'
+                (filtering)='onFilteringWC($event)' [itemTemplate]="WcCode" [valueTemplate]="WcCode">
+            </ejs-dropdownlist>
+            <span class="mt-1">
+                <ng-template #WcCode let-data>
+                    <span>{{data.workCenterCode}}</span> - 
+                    <span class="fs-sm"> {{data.workCenterName}}</span>
+                </ng-template>
+            </span>
+            <span *ngIf="showErrorMsg" style="padding-left: 5px;color: red;">Select Workcenter</span>
+        </div>
+    </div>
+    <ejs-grid *ngIf="workCenterId" #grid [dataSource]='manpowerToWorkCenter' [editSettings]='editSettings'
+        [toolbar]='toolbar' gridLines='Both' (actionBegin)='actionBegin($event)' [allowSorting]='true'
+        [allowPdfExport]='true' (toolbarClick)='toolbarClick($event)' [allowExcelExport]='true'
+        (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='50'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='manpowerType' headerText='Man Power Type' [valueAccessor]='getManTypePowerName'
+                width='150'></e-column>
+            <e-column field='manpowerCode' [visible]="false" isPrimaryKey='true'></e-column>
+            <e-column field='manpowerCategoryName' headerText='Man Power Category' width=150></e-column>
+            <e-column field='manpowerName' headerText='Man Power Name' width=130></e-column>
+            <e-column field='budgetedCostPerHour' headerText='Budgeted Cost/Hour' width=130></e-column>
+            <e-column field='actualCostPerHour' headerText='Actual Cost/Hour' width=130></e-column>
+            <e-column field='remarks' headerText='Remarks' width=130></e-column>
+            <e-column headerText='Actions' width='110' [commands]='commands'></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="mappingForm">
+                <div class="d-flex flex-wrap">
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': manpowerType.invalid && (manpowerType.dirty || manpowerType.touched || submitClicked)}">
+                        <div>
+                            <label for="manpowerType">Type</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist [readonly]="disableColumn" placeholder="Select a type"
+                                formControlName="manpowerType" (change)='manPowerTypeOnChange($event)'
+                                [dataSource]='manpowerTypes' popupHeight='150px' floatLabelType='Never' autofocus>
+                            </ejs-dropdownlist>
+                            <div *ngIf="manpowerType.invalid && (manpowerType.dirty || manpowerType.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="manpowerType.errors.required">
+                                    Type is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': manpowerCategoryCode.invalid && (manpowerCategoryCode.dirty || manpowerCategoryCode.touched || submitClicked)}">
+                        <div>
+                            <label>Category</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist [readonly]="disableColumn" placeholder="Search a category"
+                                formControlName="manpowerCategoryCode" (change)='manPowerCategoryOnChange($event)'
+                                [dataSource]='manPowerCategory'
+                                [fields]="{text: 'categoryName', value: 'categoryCode' }" popupHeight='200px'
+                                floatLabelType='Never' [allowFiltering]='true' [itemTemplate]="WcCode"
+                                [valueTemplate]="WcCode" (filtering)='onFilteringRes($event)'>
+                            </ejs-dropdownlist>
+                            <span class="mt-1">
+                                <ng-template #WcCode let-data>
+                                    <span>{{data.categoryCode}}</span> - 
+                                    <span class="fs-sm"> {{data.categoryName}}</span>
+                                </ng-template>
+                            </span>
+                            <div *ngIf="manpowerCategoryCode.invalid && (manpowerCategoryCode.dirty || manpowerCategoryCode.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="manpowerCategoryCode.errors.required">
+                                    Category is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': manPowerName.invalid && (manPowerName.dirty || manPowerName.touched || submitClicked)}">
+                        <div>
+                            <label>Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist placeholder="Search a name" [readonly]="disableColumn"
+                                formControlName="manpowerCode" [allowFiltering]='true' [dataSource]='manPowerfiltername'
+                                [fields]="{text: 'manpowerName', value: 'manpowerCode' }"
+                                (change)='manPowerNameOnChange($event)' [itemTemplate]="manpowerCode"
+                                [valueTemplate]="manpowerCode"></ejs-dropdownlist>
+                            <div *ngIf="manPowerName.invalid && (manPowerName.dirty || manPowerName.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="manPowerName.errors.required">
+                                    Category is required.
+                                </div>
+                            </div>
+                            <ng-template #manpowerCode let-data>
+                                <span>
+                                    <span class="mt-1">{{data.manpowerCode}} - {{data.manpowerName}}</span>
+                                </span>
+                            </ng-template>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': budgetedCostPerHour.invalid && (budgetedCostPerHour.dirty || budgetedCostPerHour.touched || submitClicked)}">
+                        <div>
+                            <label for="budgetedCostPerHour">Budgeted Cost Rate/Hr</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-numerictextbox class="e-input e-field" name="budgetedCostPerHour"
+                                formControlName="budgetedCostPerHour" [showSpinButton]='false' maxlength="10">
+                            </ejs-numerictextbox>
+                            <div *ngIf="budgetedCostPerHour.invalid && (budgetedCostPerHour.dirty || budgetedCostPerHour.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="budgetedCostPerHour.errors.required">
+                                    Budgeted Cost is required.
+                                </div>
+                                <div *ngIf="budgetedCostPerHour.errors.max">
+                                    Budgeted Cost cannot be more than 6 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': actualCostPerHour.invalid && (actualCostPerHour.dirty || actualCostPerHour.touched || submitClicked)}">
+                        <div>
+                            <label for="actualCostPerHour">Actual Cost Rate/Hr</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-numerictextbox class="e-input e-field" name="actualCostPerHour"
+                                formControlName="actualCostPerHour" [showSpinButton]='false' maxlength="10">
+                            </ejs-numerictextbox>
+                            <div *ngIf="actualCostPerHour.invalid && (actualCostPerHour.dirty || actualCostPerHour.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="actualCostPerHour.errors.required">
+                                    Actual Cost is required.
+                                </div>
+                                <div *ngIf="actualCostPerHour.errors.max">
+                                    Actual Cost cannot be more than 6 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div class="mt-1">
+                            <label> Currency</label>
+                            <!-- <sup class="text-danger">*</sup> -->
+                        </div>
+                        <div>INR </div>
+                    </div>
+                    <div class="form-group form-input-line col-12 " [ngClass]="{'e-error': remarksCtrl.invalid && (remarksCtrl.dirty || remarksCtrl.touched || submitClicked)}">
+                        <div>
+                            <label for="remarks">Remarks</label>
+                        </div>
+                        <div>
+                            <textarea type="text" class="e-input" formControlName="remarks"></textarea>
+                            <div *ngIf="remarksCtrl.invalid && (remarksCtrl.dirty || remarksCtrl.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="remarksCtrl.errors.maxlength">
+                                    Remarks cannot be more than 128 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ejs-grid>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Manpower To Workcenter Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Workcenter :</div>
+                <div> {{workCenterName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Manpower Type : </div>
+                <div> {{manpowerTypeName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Manpower Category : </div>
+                <div> {{ManpowerCategoryName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Manpower Name :</div>
+                <div> {{manpowerName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> Budgeted Cost Rate/Hr :</div>
+                <div>{{dataForView?.budgetedCostPerHour}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Budgeted Cost Currency Code : </div>
+                <div>{{budgetedCostCurrencyCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Actual Cost Rate/Hr : </div>
+                <div>{{dataForView?.actualCostPerHour}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Actual Cost Currency Code : </div>
+                <div>{{actualCostCurrencyCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{remarks}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

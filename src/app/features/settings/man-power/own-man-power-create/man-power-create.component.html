@@ -1,0 +1,76 @@
+<form id="ManPowerCreate" [formGroup]="addForm" (validSubmit)="onSubmit()">
+    <div class="modal-header">
+        <h4 class="modal-title">Create Manpower</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="form-group form-input-line col-6">
+                <div >
+                    <label for="manpowerId">Id </label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div >
+                    <ejs-autocomplete id='atcelement' formControlName="manpowerId" [dataSource]='employees'>
+                        <ng-template #itemTemplate="" let-data="">
+                            <span><span class='name'> {{data.name}}</span><span
+                                    class="fs-sm"> {{data.employeeCode}}</span></span>
+                        </ng-template>
+                    </ejs-autocomplete>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6">
+                <div>
+                    <label for="manpowerCategoryId">Category</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-dropdownlist formControlName="manpowerCategoryId" id='manpowerCategoryId'
+                        [dataSource]='manPowerCategories' [fields]='fields'></ejs-dropdownlist>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6">
+                <div>
+                    <label for="manpowerName">Name </label>
+                    <sup class="text-danger">*</sup>
+                </div>
+
+                <div>
+                    <input type="text" class=" e-input" formControlName="manpowerName">
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6 ">
+                <div>
+                    <label for="email">Email</label>
+                </div>
+                <div>
+                    <input type="email" class=" e-input" formControlName="email">
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6 ">
+                <div>
+                    <label for="phone">Phone </label><sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-maskedtextbox mask='\\+000-0000000' formControlName="phone"></ejs-maskedtextbox>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-12 ">
+                <div>
+                    <label for="remarks">Remarks</label>
+                </div>
+                <div>
+                    <textarea type="text" class=" e-input" formControlName="remarks"></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="activeModal.close('Close click')"><i
+                class="mr-1 fal fa-window-close"></i> Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="mr-1 fal fa-save"></i>Save</button>
+    </div>
+</form>

@@ -1,0 +1,123 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Cost Price Component Details
+    </h1>
+</div>
+<div class="card p-3">
+    <ejs-grid #grid [dataSource]='costPriceComponet' [editSettings]='editSettings' [toolbar]='toolbar'
+        (queryCellInfo)='queryCellInfo($event)' (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)' gridLines='Both'
+        (commandClick)='commandClick($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='5'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='cpcCode' headerText='Code' isPrimaryKey='true' width='10'></e-column>
+            <e-column field='cpcName' headerText='Name' width='15'></e-column>
+            <e-column field='cpcType' [valueAccessor]='getCpcTypeName' headerText='Type' width='15'> </e-column>
+            <e-column field='description' headerText='Remarks' width='15'></e-column>
+            <e-column headerText='Actions' width=10 [commands]='commands'></e-column> 
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="cpcForm">
+                <div class="d-flex flex-wrap">
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="cpcCode">Code</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input " name='cpcCode' formControlName="cpcCode" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': cpcName.invalid && (cpcName.dirty || cpcName.touched || submitClicked)}">
+                        <div>
+                            <label for="cpcName">Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input e-field" name='cpcName' formControlName="cpcName" type="text" />
+                            <div *ngIf="cpcName.invalid && (cpcName.dirty || cpcName.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="cpcName.errors.duplicate">
+                                        Name already exists.
+                                    </div>
+                                    <div *ngIf="cpcName.errors.required">
+                                        Name is required.
+                                    </div>
+                                    <div *ngIf="cpcName.errors.maxlength">
+                                        Name cannot be more than 32 characters.
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': cpcType.invalid && (cpcType.dirty || cpcType.touched || submitClicked)}">
+                        <div>
+                            <label for="cpcType">Type</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist formControlName="cpcType" [fields]='{text: "text", value: "value"}'
+                                [dataSource]='cpcTypes' placeholder="Select CPC Type">
+                            </ejs-dropdownlist>
+                            <div *ngIf="cpcType.invalid && (cpcType.dirty || cpcType.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="cpcType.errors.required">
+                                        Type is required.
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                   
+                    <div class="form-group form-input-line col-12 ">
+                        <div>
+                            <label for="description">Remarks</label>
+                            <!-- <sup class="text-danger">*</sup> -->
+                        </div>
+                        <div>
+                            <textarea type="text" class="e-input" formControlName="description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ejs-grid>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Cost Price Component Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div> {{cpcCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Name : </div>
+                <div> {{dataForView?.cpcName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Type : </div>
+                <div> {{cpcTypeName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{description}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

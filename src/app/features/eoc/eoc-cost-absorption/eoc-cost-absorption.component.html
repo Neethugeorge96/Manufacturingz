@@ -1,0 +1,22 @@
+<div class="d-flex flex-wrap mt-3">
+    <ejs-grid [dataSource]='CPCEstimatedList' [toolbar]='toolbar' gridLines='Both'>
+    <e-columns>
+        <e-column headerText='S.No.' width='30'>
+            <ng-template #template let-d>
+                <div>{{ +d.index+1 }}</div>
+            </ng-template>
+        </e-column>
+        <e-column field='workCenterId' headerText='Work Center' width='80'></e-column>
+        <e-column field='cpcName' headerText='CPC' width='60'></e-column>
+        <e-column field='costAbsorpationBasis' [valueAccessor]='getCostAbsorptionTypeName' headerText='Absorption Basis' width='80'></e-column>
+        <e-column field='costAbsorptionRatePerHour' headerText='Absorption Basis Rate/Hr' width='100'></e-column>
+        <e-column field='currencyCode' headerText='Currency' width='60'></e-column>
+        <e-column field='totalHour' headerText='Total Hours' width='80'></e-column>
+        <e-column field='totalCost' headerText='Total Cost Absorbed for CPC' width='120'></e-column>
+    </e-columns>
+    </ejs-grid>
+    <div  class="button-right-wrapper mt-3 ml-auto mr-2">
+        <button ejs-button (click) ="previous()" cssClass="e-outline">Preivous</button>
+        <button (click)="next()" ejs-button cssClass="e-outline ml-3" [isPrimary]="true">Next </button>
+    </div>
+</div>

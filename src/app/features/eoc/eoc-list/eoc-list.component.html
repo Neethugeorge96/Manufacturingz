@@ -1,0 +1,26 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Estimated Operations Costing
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='eocOrder' [editSettings]='editSettings' [toolbar]='toolbarOptions'
+            (actionBegin)='actionBegin($event)' gridLines='Both'>
+            <e-columns>
+                <e-column headerText='S.No.' width='30'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='productionLineName' headerText='Production Line' width='120'></e-column>
+                <e-column field='manufacturedProduct' headerText='Manufactured Product' width='120'></e-column>
+                <e-column field='routingName' headerText='Routing code' isPrimaryKey='true' width='80'></e-column>
+                <e-column field='routingCostingBasis' [valueAccessor]='getRoutingCostingBasic' headerText='Routing costing basis' width='120'></e-column>
+                <e-column field='productionUOM' headerText='UOM' width='60'></e-column>
+                <e-column field='productionQuantity' headerText='Quantity' width='60'></e-column>
+                <e-column headerText='Actions' width='80' [commands]='commands'></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>

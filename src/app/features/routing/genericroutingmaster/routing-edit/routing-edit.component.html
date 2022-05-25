@@ -1,0 +1,147 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+       Edit Generic Routing
+    </h1>
+    <button [routerLink]="['../']" routerLinkActive="router-link-active" class="btn btn-outline-primary btn-sm">
+        Back to route list
+        <i class="fal fa-arrow-left ml-1"></i>
+    </button>
+</div>
+<div class="card p-3">
+    <form [formGroup]="routeForm" (validSubmit)="onSubmit()">
+
+        <div class="d-flex flex-wrap col-md-8">
+            <div class="form-group form-input-line col-6">
+                <div>
+                    <label for="routingCode">Code</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <input type="text" formControlName="routingCode" class="e-input">
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': routingName.invalid && (routingName.dirty || routingName.touched || submitClicked)}">
+                <div>
+                    <label for="routingName">Name</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+
+                <div>
+                    <input type="text" formControlName="routingName" class="e-input" (change)="duplicationValidation($event)">
+                    <div *ngIf="routingName.invalid && (routingName.dirty || routingName.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="routingName.errors.required">
+                            Name is required.
+                        </div>
+                        <div *ngIf="routingName.errors.maxlength">
+                            Name cannot be more than 32 characters.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': routingType.invalid && (routingType.dirty || routingType.touched || submitClicked)}">
+                <div>
+                    <label for="RoutingType">Type</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-dropdownlist formControlName="routingType" [dataSource]='routingTypes'
+                        placeholder="Select Routing type" [fields]="{text: 'text', value: 'value' }"></ejs-dropdownlist>
+                    <div *ngIf="routingType.invalid && (routingType.dirty || routingType.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="routingType.errors.required">
+                            Type is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)}">
+                <div>
+                    <label for="productionLineCode">Production line</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-dropdownlist formControlName="productionLineCode" [dataSource]='productionLines'
+                        placeholder="Select Production Line"
+                        [fields]="{text: 'productionLineName', value: 'productionLineCode' }"></ejs-dropdownlist>
+                    <div *ngIf="productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="productionLineCode.errors.required">
+                            Production line is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="routeForm.controls.routingType.value === 2" class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': mainRoutingCode.invalid && (mainRoutingCode.dirty || mainRoutingCode.touched || submitClicked)}">
+                <div>
+                    <label for="mainRoutingCode">Main Routing Code/Name </label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-autocomplete id='atcelement' [fields]="fields" formControlName="mainRoutingCode"
+                        [dataSource]='otherRoutes' placeholder='Select Route' [query]='query' [filterType]='filterType'
+                        [required]="routeForm.controls.routingType.value === 2">
+                        <ng-template #itemTemplate="" let-data="">
+                            <span>
+                                <span class='name'> {{data.routingName}}</span>
+                                <span class="fs-sm float-right">{{data.routingCode}}</span>
+                            </span>
+                        </ng-template>
+                    </ejs-autocomplete>
+                    <div *ngIf="mainRoutingCode.invalid && (mainRoutingCode.dirty || mainRoutingCode.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="mainRoutingCode.errors.required">
+                            Routing Code is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 d-flex justify-content-end mb-2 pr-3">
+                <button type="button" (click)="onSubmit()" class="btn btn-sm btn-outline-primary">Update</button>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap ">
+            <div class="col-4 border shadow-inset-3 p-3">
+                <div id='treeparent'>
+                    <ejs-treeview id='treeelement' (nodeSelecting)="onNodeSelecting($event)" [fields]='field'>
+                    </ejs-treeview>
+                </div>
+            </div>
+            <div class="col-8 border shadow-inset-3">
+                <div [ngSwitch]="type" class="p-3">
+                    <div *ngSwitchCase="'RO'">
+                        <app-route-view [route]="selectedNode" [currentRoute]="currentRoute"
+                            (rowChanged)="listAltered($event)"></app-route-view>
+                    </div>
+                    <div *ngSwitchCase="'OP'">
+                        <app-operation-view [operation]="selectedNode" [costToTask]="costToTask"
+                            (rowChanged)="listAltered($event)">
+                        </app-operation-view>
+                    </div>
+                    <div *ngSwitchCase="'TA'">
+                        <app-task-view [task]="selectedNode"></app-task-view>
+                    </div>
+                    <div *ngSwitchCase="'MC'">
+                        <app-machine-view [task]="selectedNode" (rowChanged)="listAltered($event)"
+                            [operation]="parentOperation"></app-machine-view>
+                    </div>
+                    <div *ngSwitchCase="'MP'">
+                        <app-manpower-view [task]="selectedNode" (rowChanged)="listAltered($event)"></app-manpower-view>
+                    </div>
+                    <div *ngSwitchCase="'CL'">
+                        <app-checklist-view [task]="selectedNode"></app-checklist-view>
+                    </div>
+                    <div *ngSwitchDefault>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

@@ -1,0 +1,62 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Bill Of Material
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid #grid [dataSource]='bom' [toolbar]='toolbar' (actionBegin)='actionBegin($event)'
+            (commandClick)='commandClick($event)' (toolbarClick)='clickHandler($event)' gridLines='Both'
+            [editSettings]='editSettings' (queryCellInfo)='queryCellInfo($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='50'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='manufacturedProductCode' headerText='Product Code' isPrimaryKey='true' width='80'></e-column>
+                <e-column field='manufacturedProduct' headerText='Product Name' width='120'></e-column>
+                <e-column field='productUOMName' headerText='Production UOM' width='100'></e-column>
+                <e-column field='bomQuantity' headerText='Production Quantity' width='100'></e-column>
+                <e-column headerText='Actions' width='65' [commands]='commands'></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+             Bill Of Material Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Product Code : </div>
+                <div> {{manufacturedProductCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Product Name :</div>
+                <div> {{manufacturedProduct}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Production Unit : </div>
+                <div> {{ProductUOMName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Production Quantity : </div>
+                <div> {{BomQuantity}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

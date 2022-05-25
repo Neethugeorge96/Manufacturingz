@@ -1,0 +1,189 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Manpower Category Details
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='manPowerCategory' [editSettings]='editSettings' [toolbar]='toolbar'
+            (queryCellInfo)='queryCellInfo($event)' (actionBegin)='actionBegin($event)' gridLines='Both'
+            (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='40'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div> 
+                    </ng-template>
+                </e-column>
+                <e-column field='categoryCode' headerText='Code' isPrimaryKey='true' width='60'></e-column>
+                <e-column field='categoryName' headerText='Name' width='120'></e-column>
+                <e-column field='costRatePerHour' headerText='Cost Rate/Hr' width='120'></e-column>
+                <e-column field='currencyCode' headerText='Currency' width='120'></e-column>
+                <e-column field='costPriceComponent' headerText='Cost Price Component' width='150'></e-column>
+                <e-column field='description' headerText='Remarks' width='150'></e-column>
+                <e-column headerText='Actions' width='100' [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="orderForm">
+                    <div class="d-flex flex-wrap">
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="categoryCode">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class=" e-input" formControlName="categoryCode">
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6"  [ngClass]="{'e-error': categoryName.invalid && (categoryName.dirty || categoryName.touched || submitClicked)}">
+                            <div>
+                                <label for="categoryName">Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class=" e-input" formControlName="categoryName">
+                                <div *ngIf="categoryName.invalid && (categoryName.dirty || categoryName.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="categoryName.errors.duplicate">
+                                        Name already exists.
+                                    </div>
+                                    <div *ngIf="categoryName.errors.required">
+                                        Name is required.
+                                    </div>
+                                    <div *ngIf="categoryName.errors.maxlength">
+                                        Name cannot be more than 32 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="currencyId">Currency</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist id='currencyId' placeholder="Search Currency"
+                                    formControlName="currencyId" [allowFiltering]='true' [dataSource]='currencyList'
+                                    [fields]="{text: 'name', value: 'id' }">
+                                    <ng-template #itemTemplate="" let-data="">
+                                        <span>
+                                            <span class="fs-sm">{{data.code}}</span>
+                                        </span>
+                                    </ng-template>
+                                </ejs-dropdownlist>
+                            </div>
+                        </div> -->
+                        <div class="form-group form-input-line col-6"  [ngClass]="{'e-error': costRatePerHour.invalid && (costRatePerHour.dirty || costRatePerHour.touched || submitClicked)}">
+                            <div>
+                                <label for="costRatePerHour">Cost Rate/Hr</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-numerictextbox class="e-input e-field" name="costRatePerHour"
+                                    formControlName="costRatePerHour" maxlength="10" [showSpinButton]='false'>
+                                </ejs-numerictextbox>
+                                <div *ngIf="costRatePerHour.invalid && (costRatePerHour.dirty || costRatePerHour.touched || submitClicked)" class="e-error d-block">
+                                   
+                                    <div *ngIf="costRatePerHour.errors.required">
+                                        Cost Rate/Hr is required.
+                                    </div>
+                                    <!-- <div *ngIf="costRatePerHour.errors.maxlength">
+                                        Cost Rate/hr cannot be more than 10 characters.
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div class="mt-1">
+                                <label > Currency</label>
+                                <!-- <sup class="text-danger">*</sup> -->
+                            </div> 
+                            <div>INR </div> 
+                        </div>
+                        <div class="form-group form-input-line col-6"  [ngClass]="{'e-error': costComponentId.invalid && (costComponentId.dirty || costComponentId.touched || submitClicked)}">
+                            <div>
+                                <label for="costComponentId">Cost Price Component</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist id='costComponentId' [fields]="{text: 'cpcName', value: 'id' }"
+                                    placeholder="Search CPC" formControlName="costComponentId" [allowFiltering]='true'
+                                    [dataSource]='costPriceComponent' [itemTemplate]="ItemTemplate" [valueTemplate]="ItemTemplate" (filtering)='onFilteringRes($event)'>
+                                    <ng-template #ItemTemplate let-data>
+                                        <span>{{data.cpcCode}}</span> - 
+                                        <span class="fs-sm">{{data.cpcName}}</span>
+                                    </ng-template>
+                                </ejs-dropdownlist>
+
+                                <div *ngIf="costComponentId.invalid && (costComponentId.dirty || costComponentId.touched || submitClicked)" class="e-error d-block">
+                                    <div *ngIf="costComponentId.errors.required">
+                                        Cost Price Componenet is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-12 "  [ngClass]="{'e-error': description.invalid && (description.dirty || description.touched || submitClicked)}">
+                            <div>
+                                <label for="description">Remarks</label>
+                            </div>
+                            <div>
+                                <textarea type="text" class=" e-input" formControlName="description"></textarea>
+                                <div *ngIf="categoryName.invalid && (description.dirty || description.touched || submitClicked)"
+                                    class="e-error d-block">
+                                   
+                                    <div *ngIf="description.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Manpower Category Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code : </div>
+                <div> {{categoryCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Name : </div>
+                <div> {{categoryNameView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Cost Rate/Hr : </div>
+                <div> {{costRate}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> Curency : </div>
+                <div> {{currency}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>CPC :</div>
+                <div> {{cpc}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{remarks}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

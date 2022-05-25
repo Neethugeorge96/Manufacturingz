@@ -1,0 +1,47 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Manpower to shift Details
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='manpowerToShift' #grid [editSettings]='editSettings' [rowHeight]=39.2 [toolbar]='toolbar'
+            (actionBegin)='actionBegin($event)' gridLines='Both' (toolbarClick)='clickHandler($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='30'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='shiftCode' headerText='Shift Code' width='60'></e-column> 
+                <e-column field='shiftName' headerText='Shift Name' width='60'></e-column>
+                <e-column field='numberOfManpower' headerText='No of Manpower'  width='60'></e-column>
+                <e-column headerText='Actions'  width='30'>
+                    <ng-template #template let-d>
+                        <div class="e-unboundcelldiv">
+                            <!-- <button type="button" title="View"  class=" e-lib e-btn e-control e-flat btn-view" (click)="rowEdit(d)">
+                                <span class="e-btn-icon e-edit e-icons"></span>
+                            </button> -->
+                            
+                            <button type="button" title="View"
+                                class=" e-lib e-btn e-control e-flat e-icon-btn  btn-view e-editbutton"
+                                (click)="rowView(d)">
+                                <span class="e-btn-icon e-edit e-icons"></span>
+                            </button>
+                            <button type="button" title="Edit"
+                                class=" e-lib e-btn e-control e-flat e-icon-btn e-edit-delete e-editbutton"
+                                (click)="rowEdit(d)">
+                                <span class="e-btn-icon e-edit e-icons"></span>
+                            </button>
+                            <button type="button" title="Delete"
+                                class="e-lib e-btn e-control e-flat e-icon-btn e-edit-delete e-editbutton"
+                                (click)="rowDelete(d)">
+                                <span class="e-btn-icon e-delete e-icons"></span>
+                            </button>
+                        </div> 
+                    </ng-template> 
+                </e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>

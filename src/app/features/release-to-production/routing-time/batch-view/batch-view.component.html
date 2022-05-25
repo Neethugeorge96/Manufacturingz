@@ -1,0 +1,62 @@
+<div class="p-3">
+    <div class="d-flex flex-wrap col-9">
+        <div class="view-item col-12 h6">
+            {{routeData?.batchCode}}
+        </div>
+        <div *ngIf="batchStarted" class="view-item col-6">
+            <div>
+                <label for="startTime">Start Time :</label>
+            </div>
+            <div>
+                {{getDate(routeData?.startTime) | date:'mediumDate'}} {{getDate(routeData?.startTime) | date:'shortTime'}}
+            </div>
+        </div>
+        <div *ngIf="batchClosed" class="view-item col-6">
+            <div>
+                <label for="startTime">End Time :</label>
+            </div>
+            <div>
+                {{getDate(routeData?.endTime) | date:'mediumDate'}} {{getDate(routeData?.endTime) | date:'shortTime'}}
+            </div>
+        </div>
+        <div *ngIf="batchClosed" class="view-item col-6">
+            <div>
+                <label for="startTime">Batch Output :</label>
+            </div>
+            <div>
+                {{routeData?.batchOutput}}
+            </div>
+        </div>
+        <div *ngIf="batchClosed" class="view-item col-6">
+            <div>
+                <label for="startTime">Damage Quantity :</label>
+            </div>
+            <div>
+                {{routeData?.damageQuantity}}
+            </div>
+        </div>
+        <div *ngIf="batchClosed" class="view-item col-12 two-column">
+            <div>
+                <label for="startTime">Damage Reason :</label>
+            </div>
+            <div>
+                {{routeData?.damageReason|| '--'}}
+            </div>
+        </div>
+        <div *ngIf="batchClosed" class="view-item col-12 two-column">
+            <div>
+                <label for="startTime">Remarks :</label>
+            </div>
+            <div>
+                {{routeData?.remarks|| '--'}}
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!(batchStarted && batchClosed)" class="col-6 d-flex justify-content-around p-3">
+
+        <button class="btn btn-primary btn-sm" [disabled]="batchStarted" (click)="batchStarting()">Batch
+            Starting</button>
+        <button class="btn btn-primary btn-sm" [disabled]="!batchStarted || !operationsClosed" (click)="batchClosing()">Batch
+            Closing</button>
+    </div>
+</div>

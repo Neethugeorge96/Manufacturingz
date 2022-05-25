@@ -1,0 +1,33 @@
+<div class="d-flex flex-wrap mt-3">
+    <div class="col-4 border shadow-inset-3">
+        <div id='treeparent'><ejs-treeview id='treeelement' (nodeSelecting)="onNodeSelecting($event)" (nodeClicked)='isNodeClicked($event)' [fields]='field'></ejs-treeview></div>
+    </div>
+    <div *ngIf="routesForCurrentBatch"  class="col-8 border shadow-inset-3">
+        <div [ngSwitch]="type" class="p-3">
+            <div *ngSwitchCase="'RO'">
+                <app-route-view [route]="selectedNode"></app-route-view>
+            </div>
+            <div *ngSwitchCase="'OP'">
+                <app-operation-view [eocRoute]="selectedRoute" [operation]="selectedNode" ></app-operation-view>
+            </div>
+            <div *ngSwitchCase="'TA'">
+                <app-task-view [task]="selectedNode"></app-task-view>
+            </div>
+            <div *ngSwitchCase="'MC'">
+                <app-machine-view [machineRoute]="selectedNode"  [task]="task"></app-machine-view>
+            </div>
+            <div *ngSwitchCase="'MP'">
+                <app-manpower-view [manpowerRoute]="selectedNode" [task]="task"></app-manpower-view>
+            </div>
+            <div *ngSwitchDefault>
+                <!-- <app-route-view [route]="id"></app-route-view> -->
+            </div>
+        </div>
+    </div>
+    <div  class="button-right-wrapper mt-3 ml-auto mr-2">
+        <button ejs-button (click) ="previous()" cssClass="e-outline">Preivous</button>
+        <button (click)="next()" ejs-button cssClass="e-outline ml-3" [isPrimary]="true">Next </button>
+    </div>
+</div>
+
+

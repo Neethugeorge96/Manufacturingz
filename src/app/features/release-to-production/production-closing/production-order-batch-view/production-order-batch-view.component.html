@@ -1,0 +1,64 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Batch Wise Details
+    </h1>
+</div>
+
+<div class="d-flex flex-wrap col-md-12" *ngIf="batchWise!=undefined">
+    <div class="view-item col-6">
+        <div>
+            <label>Batch Code :</label>
+        </div>
+        <div>
+            {{batchWise.batchCode}}
+        </div>
+    </div>
+    <div *ngIf="batchStart" class="view-item col-6">
+        <div>
+            <label>Start Time :</label>
+        </div>
+        <div>
+             {{getDate(batchWise?.startTime) | date:'mediumDate'}} {{getDate(batchWise?.startTime) | date:'shortTime'}}
+        </div>
+    </div>
+    <div *ngIf="batchClosed" class="view-item col-6">
+        <div>
+            <label>End Time :</label>
+        </div>
+        <div>
+            {{getDate(batchWise?.endTime) | date:'mediumDate'}} {{getDate(batchWise?.endTime) | date:'shortTime'}}
+        </div>
+    </div>
+    <div class="view-item col-6">
+        <div>
+            <label>Output :</label>
+        </div>
+        <div>
+            {{batchWise.batchOutput}}
+        </div>
+    </div>
+    <div class="view-item col-6">
+        <div>
+            <label>Damage Quantity :</label>
+        </div>
+        <div>
+            {{batchWise.damageQuantity}}
+        </div>
+    </div>
+    <div class="view-item col-6">
+        <div>
+            <label>Damage Reason :</label>
+        </div>
+        <div>
+            {{batchWise.damageReason}}
+        </div>
+    </div>
+    <div class="view-item col-6">
+        <div>
+            <label>Remarks :</label>
+        </div>
+        <div>
+            {{batchWise.remarks}}
+        </div>
+    </div>
+</div>

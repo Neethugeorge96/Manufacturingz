@@ -1,0 +1,119 @@
+<div [formGroup]="productionorderForm" class="mt-6">
+    <div class="d-flex flex-wrap col-md-12 col-lg-8 ">
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>Production Order No</label>
+                <sup class=" text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-numerictextbox format="n" class="e-input e-field" formControlName="productionOrderNumber"
+                    [showSpinButton]='false'>
+                </ejs-numerictextbox>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6"
+            [ngClass]="{'e-error': productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)}">
+            <div>
+                <label for="productionLineCode">Production Line</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-dropdownlist id='productionLine'
+                    [fields]="{text: 'productionLineName', value: 'productionLineCode' }"
+                    placeholder="Search production line" [allowFiltering]='true' (filtering)='onFilteringRes($event)'
+                    formControlName="productionLineCode" [dataSource]='productionLines'>
+                    <ng-template #itemTemplate="" let-data="">
+                        <span>
+                            <span class='productionLine'>{{data.productionLineCode}} -
+                                {{data.productionLineName}}</span>
+                        </span>
+                    </ng-template>
+                </ejs-dropdownlist>
+                <div *ngIf="productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionLineCode.errors.required">
+                        Production Line is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6"
+            [ngClass]="{'e-error': productionOrderDate.invalid && (productionOrderDate.dirty || productionOrderDate.touched || submitClicked)}">
+            <div>
+                <label>PO Date</label>
+                <sup class="  text-danger">*</sup>
+            </div>
+            <div>
+
+                <ejs-datepicker format='dd-MM-yyyy' placeholder='Select date' [value]='value'
+                    formControlName="productionOrderDate">
+                </ejs-datepicker>
+                <div *ngIf="productionOrderDate.invalid && (productionOrderDate.dirty || productionOrderDate.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionOrderDate.errors.required">
+                        PO Date is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6"
+            [ngClass]="{'e-error': productionCode.invalid && (productionCode.dirty || productionCode.touched || submitClicked)}">
+            <div>
+                <label>Production Item</label>
+                <sup class="  text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-dropdownlist formControlName="productionCode" [dataSource]='productItems' placeholder="Select Item"
+                    [fields]="{text: 'manufacturedProduct', value: 'manufacturedProductCode' }" [allowFiltering]='true' >
+                    <ng-template #itemTemplate="" let-data="">
+                        <div>
+                            <div>{{data.manufacturedProduct}}</div>
+                            <div class="float-right fs-sm">{{data.manufacturedProductCode}}</div>
+                        </div>
+                    </ng-template>
+                </ejs-dropdownlist>
+                <div *ngIf="productionCode.invalid && (productionCode.dirty || productionCode.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionCode.errors.required">
+                        Production Item is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': productionQuantity.invalid && (productionQuantity.dirty || productionQuantity.touched || submitClicked)}">
+            <div>
+                <label>Production UOM and Qty</label>
+                <sup class="  text-danger">*</sup>
+            </div>
+            <div class="col-12 d-flex">
+                 <input class="col-6 pl-0 pr-0" type="text" class="e-input" placeholder="Uom" formControlName="uom">
+                <ejs-numerictextbox class="col-6 px-0" class="e-input e-field" format="n" [showSpinButton]='false'
+                    [min]="1" placeholder="Qty" formControlName="productionQuantity"
+                    ></ejs-numerictextbox>
+                <div *ngIf="productionQuantity.invalid && (productionQuantity.dirty || productionQuantity.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionQuantity.errors.required">
+                        Production Qty is required.
+                    </div>
+                    <div *ngIf="productionQuantity.errors.min">
+                        Production Qty cannot be less than {{batchForItem?.batchSizeMinQuantity}}.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>Batch (Count)</label>
+                <sup class="  text-danger">*</sup>
+            </div>
+            <div>
+                <input type="text" class="e-input" formControlName="batchSize" >
+            </div>
+        </div>
+        <div class="button-right-wrapper col-12 pr-3">
+            <button ejs-button routerLink='../' cssClass="e-outline">Cancel</button>
+            <button type="submit" (click)="submit()" ejs-button cssClass="e-outline ml-3" [isPrimary]="true">Next </button>
+        </div>
+    </div>
+    
+</div>

@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h4 class="modal-title">Batch Starting</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form [formGroup]="startForm">
+    <div class="modal-body">
+
+        <div class="d-flex flex-wrap align-items-center">
+
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': startTime.invalid && (startTime.dirty || startTime.touched || submitClicked)}">
+                <div>
+                    <label class="text-nowrap" for="startTime">Start Time</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-timepicker id="startTime" formControlName="startTime" [allowEdit]="false" placeholder='Select a time'>
+                    </ejs-timepicker>
+                    <div *ngIf="startTime.invalid && (startTime.dirty || startTime.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="startTime.errors.required">
+                            Start Time is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" (click)="submit()" class="btn btn-sm btn-primary"> Save</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary border-0"
+            (click)="activeModal.close('Close click')">
+            Cancel
+        </button>
+    </div>
+</form>

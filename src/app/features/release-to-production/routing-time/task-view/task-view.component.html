@@ -1,0 +1,36 @@
+<div class="p-3">
+    <div class="d-flex flex-wrap col-9">
+        <div *ngIf="taskStarted" class="view-item col-6">
+            <div>
+                <label for="startTime">Start Time :</label>
+            </div>
+            <div>
+                {{getDate(taskData.startTime)| date:'mediumDate'}} {{getDate(taskData.startTime)| date:'shortTime'}}
+            </div>
+        </div>
+        <div *ngIf="taskClosed" class="view-item col-6">
+            <div>
+                <label for="startTime">End Time :</label>
+            </div>
+            <div>
+                {{getDate(taskData.endTime)| date:'mediumDate'}} {{getDate(taskData.endTime)| date:'shortTime'}}
+            </div>
+        </div>
+
+        <div *ngIf="taskClosed" class="view-item col-12 two-column">
+            <div>
+                <label for="startTime">Remarks :</label>
+            </div>
+            <div>
+                {{taskData.remarks || '--'}}
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!(taskStarted && taskClosed) && parentStarted && !parentClosed" class="col-6 d-flex justify-content-around p-3">
+
+        <button class="btn btn-primary btn-sm" [disabled]="taskStarted " (click)="taskStarting()">Task
+            Starting</button>
+        <button class="btn btn-primary btn-sm" [disabled]="!taskStarted" (click)="taskClosing()">Task
+            Closing</button>
+    </div>
+</div>

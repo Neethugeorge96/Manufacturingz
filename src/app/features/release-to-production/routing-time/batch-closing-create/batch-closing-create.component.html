@@ -1,0 +1,109 @@
+<div class="modal-header">
+    <h4 class="modal-title">Batch Closing</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form [formGroup]="startForm">
+    <div class="modal-body">
+
+        <div class="d-flex flex-wrap align-items-center">
+
+            <div class="form-group form-input-line col-6">
+                <div>
+                    <label class="text-nowrap" for="startTime">Start Time</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-timepicker id="startTime" formControlName="startTime" #startTime placeholder='Select a time'>
+                    </ejs-timepicker>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': endTime.invalid && (endTime.dirty || endTime.touched || submitClicked)}">
+                <div>
+                    <label for="endTime">End Time</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-timepicker id="endTime" formControlName="endTime" #startTime [allowEdit]="false"
+                        placeholder='Select a time'></ejs-timepicker>
+                    <div *ngIf="endTime.invalid && (endTime.dirty || endTime.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="endTime.errors.required">
+                            End Time is required.
+                        </div>
+                        <div *ngIf="endTime.errors.earlier">
+                            End Time is earlier to start time
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': batchOutput.invalid && (batchOutput.dirty || batchOutput.touched || submitClicked)}">
+                <div>
+                    <label for="endTime">Batch Output</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-numerictextbox format="n" [showSpinButton]='false' class="e-input e-field"
+                        formControlName="batchOutput">
+                    </ejs-numerictextbox>
+                    <div *ngIf="batchOutput.invalid && (batchOutput.dirty || batchOutput.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="batchOutput.errors.required">
+                            Batch Output is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': damageQuantity.invalid && (damageQuantity.dirty || damageQuantity.touched || submitClicked)}">
+                <div>
+                    <label for="endTime">Damage Quantity</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-numerictextbox format="n" [showSpinButton]='false' class="e-input e-field"
+                        formControlName="damageQuantity">
+                    </ejs-numerictextbox>
+                    <div *ngIf="damageQuantity.invalid && (damageQuantity.dirty || damageQuantity.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="damageQuantity.errors.required">
+                            Damage Quantity is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-12">
+                <div>
+                    <label for="damageReason">Damage Reason</label>
+                </div>
+                <div>
+                    <textarea class="e-input" formControlName="damageReason" id="damageReason" name="damageReason"
+                        type="text"></textarea>
+                </div>
+
+            </div>
+            <div class="form-group form-input-line col-12">
+                <div>
+                    <label for="remarks">Remarks</label>
+                </div>
+                <div>
+                    <textarea class="e-input" formControlName="remarks" id="remarks" name="remarks"
+                        type="text"></textarea>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" (click)="submit()" class="btn btn-sm btn-primary"> Save</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary border-0"
+            (click)="activeModal.close('Close click')">
+            Cancel
+        </button>
+
+    </div>
+</form>

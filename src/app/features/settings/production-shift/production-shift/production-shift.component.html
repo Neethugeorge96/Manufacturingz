@@ -1,0 +1,344 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Production Shift Details
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='productionShift' [editSettings]='editSettings' [toolbar]='toolbar'
+            (queryCellInfo)='queryCellInfo($event)' (actionBegin)='actionBegin($event)' gridLines='Both'
+            (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='30'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='shiftCode' headerText='Code' isPrimaryKey='true' width='80'></e-column>
+                <e-column field='shiftName' headerText='Name' width='110'></e-column>
+                <e-column field='shiftDurationInDays' headerText='Duration(In Days)' width='70'></e-column>
+                <e-column field='shiftStartDay' [valueAccessor]='getshiftduration' headerText='Start Day' width='100'>
+                </e-column>
+                <e-column field='startTime' headerText='Start Time' type="dateTime" format="hh:mm a" width='80'>
+                </e-column>
+                <e-column field='endTime' headerText='End Time' type="dateTime" format="hh:mm a" width='80'></e-column>
+                <e-column headerText='Actions' width=70 [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="addForm">
+                    <div class="d-flex flex-wrap">
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="shiftCode">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class="e-input" formControlName="shiftCode">
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': shiftName.invalid && (shiftName.dirty || shiftName.touched || submitClicked)}">
+                            <div>
+                                <label for="shiftName">Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class="e-input" formControlName="shiftName">
+                                <div *ngIf="shiftName.invalid && (shiftName.dirty || shiftName.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="shiftName.errors.duplicate">
+                                        Name already exists.
+                                    </div>
+                                    <div *ngIf="shiftName.errors.required">
+                                        Name is required.
+                                    </div>
+                                    <div *ngIf="shiftName.errors.maxlength">
+                                        Name cannot be more than 32 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': shiftDurationInDays.invalid && (shiftDurationInDays.dirty || shiftDurationInDays.touched || submitClicked)}">
+                            <div>
+                                <label for="shiftDurationInDays">Duration (In Days)</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <!-- <input type="number" class="e-input"  formControlName="shiftDurationInDays"> -->
+                                <ejs-numerictextbox class="e-input e-field" formControlName="shiftDurationInDays"
+                                    [showSpinButton]='false'>
+                                </ejs-numerictextbox>
+                                <div *ngIf="shiftDurationInDays.invalid && (shiftDurationInDays.dirty || shiftDurationInDays.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="shiftDurationInDays.errors.required">
+                                        Duration is required.
+                                    </div>
+                                    <div *ngIf="shiftDurationInDays.errors.max">
+                                        Duration cannot be more than 100.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 "
+                            [ngClass]="{'e-error': shiftStartDay.invalid && (shiftStartDay.dirty || shiftStartDay.touched || submitClicked)}">
+                            <div>
+                                <label for="shiftStartDay">Start Day</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist placeholder="Search start day" formControlName="shiftStartDay"
+                                    [dataSource]='shiftStartDays' [allowFiltering]='true'
+                                    [fields]="{text: 'text', value: 'value' }">
+                                </ejs-dropdownlist>
+                                <div *ngIf="shiftStartDay.invalid && (shiftStartDay.dirty || shiftStartDay.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="shiftStartDay.errors.required">
+                                        Start Day is required.
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 "
+                            [ngClass]="{'e-error': noOfBreaks.invalid && (noOfBreaks.dirty || noOfBreaks.touched || submitClicked)}">
+                            <div>
+                                <label for="noOfBreaks">No: of Breaks</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-numerictextbox class="e-input e-field" formControlName="noOfBreaks"
+                                    [showSpinButton]='false'>
+                                </ejs-numerictextbox>
+                                <!-- <input type="number" class="e-input"  formControlName="noOfBreaks"> -->
+                                <div *ngIf="noOfBreaks.invalid && (noOfBreaks.dirty || noOfBreaks.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="noOfBreaks.errors.required">
+                                        No: of Breaks is required.
+                                    </div>
+                                    <div *ngIf="noOfBreaks.errors.max">
+                                        No: of Breaks cannot be more than 10.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 "
+                            [ngClass]="{'e-error': breakDurationInMinute.invalid && (breakDurationInMinute.dirty || breakDurationInMinute.touched || submitClicked)}">
+                            <div>
+                                <label for="breakDurationInMinute">Break Duration (mins)</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-numerictextbox class="e-input e-field" formControlName="breakDurationInMinute"
+                                    [showSpinButton]='false'>
+                                </ejs-numerictextbox>
+                                <!-- <input type="number" class="e-input"  formControlName="breakDurationInMinute"> -->
+                                <div *ngIf="breakDurationInMinute.invalid && (breakDurationInMinute.dirty || breakDurationInMinute.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="breakDurationInMinute.errors.required">
+                                        Break Duration is required.
+                                    </div>
+                                    <div *ngIf="breakDurationInMinute.errors.max">
+                                        Break Duration cannot be more than 60.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 "
+                            [ngClass]="{'e-error': startTimePick.invalid && (startTimePick.dirty || startTimePick.touched || submitClicked)}">
+                            <div>
+                                <label for="startTime">Start Time</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-timepicker id="starttime" formControlName="startTime" #startTime
+                                    placeholder='Select a start time' (change)="getStartDate($event)">
+                                </ejs-timepicker>
+                                <div *ngIf="startTimePick.invalid && (startTimePick.dirty || startTimePick.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="startTimePick.errors.required">
+                                        Start Time is required.
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 "
+                            [ngClass]="{'e-error': endTimePick.invalid && (endTimePick.dirty || endTimePick.touched || submitClicked)}">
+                            <div>
+                                <label for="endTime">End Time</label>
+                                <sup class="text-danger" *ngIf="endTimePicker?.enabled">*</sup>
+                            </div>
+                            <div>
+                                <ejs-timepicker id="endtime" formControlName="endTime" #endTime
+                                    (change)="onendChange($event)" placeholder='Select a end time' [enabled]='false'
+                                    [required]="endTimePicker?.enabled">
+                                </ejs-timepicker>
+                                <div *ngIf="endTimePick.invalid && (endTimePick.dirty || endTimePick.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="endTimePick.errors.required">
+                                        End time is required
+                                    </div>
+                                    <!-- <div *ngIf="endTimePick.errors.invalidDate">
+                                        End Time should be greater than Start Time.
+                                    </div> -->
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 ">
+                            <div>
+                                <label for="shiftTotalTime">Total time</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-numerictextbox class="e-input e-field" formControlName="shiftTotalTime" readonly
+                                    [showSpinButton]='false'>
+                                </ejs-numerictextbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 ">
+                            <div>
+                                <label for="isOverTimeRequired">Overtime(OT)</label>
+                            </div>
+                            <div>
+                                <span class="align-top mr-2">No</span>
+                                <ejs-switch formControlName="isOverTimeRequired" [checked]="false"></ejs-switch>
+                                <span class="align-top ml-2">Yes</span>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 " *ngIf="isOverTimeRequired.value"
+                            [ngClass]="{'e-error': minimumOverTimeHour.invalid && (minimumOverTimeHour.dirty || minimumOverTimeHour.touched || submitClicked)}">
+                            <div>
+                                <label for="minimumOverTimeHour">OT grace hours/mins</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-numerictextbox class="e-input e-field" formControlName="minimumOverTimeHour"
+                                    [showSpinButton]='false' [required]="isOverTimeRequired.value">
+                                </ejs-numerictextbox>
+                                <div *ngIf="minimumOverTimeHour.invalid && (minimumOverTimeHour.dirty || minimumOverTimeHour.touched || submitClicked) "
+                                    class="e-error d-block">
+                                    <div *ngIf="minimumOverTimeHour.errors.required">
+                                        OT grace hours/mins is required.
+                                    </div>
+                                    <div *ngIf="minimumOverTimeHour.errors.max">
+                                        OT grace hours/mins cannot be more than 12.
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 " *ngIf="isOverTimeRequired.value"
+                            [ngClass]="{'e-error': timeBeyondShiftHour.invalid && (timeBeyondShiftHour.dirty || timeBeyondShiftHour.touched || submitClicked)}">
+                            <div>
+                                <label for="shiftTotalTime">Overtime Hours</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-numerictextbox class="e-input e-field" formControlName="timeBeyondShiftHour"
+                                    [showSpinButton]='false' [required]="isOverTimeRequired.value">
+                                </ejs-numerictextbox>
+                                <div *ngIf="minimumOverTimeHour">
+                                    <div *ngIf="timeBeyondShiftHour.invalid && (timeBeyondShiftHour.dirty || timeBeyondShiftHour.touched || submitClicked)"
+                                        class="e-error d-block">
+                                        <div *ngIf="timeBeyondShiftHour.errors.required">
+                                            Overtime Hours is required.
+                                        </div>
+                                        <div *ngIf="timeBeyondShiftHour.errors.max">
+                                            Overtime Hours cannot be more than 12.
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group form-input-line col-12 "
+                            [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                            <div>
+                                <label for="remarks">Remarks</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <textarea type="text" class="e-input" formControlName="remarks"></textarea>
+                                <div *ngIf="remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="remarks.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Production Shift Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div> {{shiftCodeView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Name : </div>
+                <div> {{shiftNameView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Shift Duration(in Days) : </div>
+                <div> {{shiftDurationInDaysView}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>No: of Duration : </div>
+                <div>{{noOfBreaksView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Break Duration : </div>
+                <div>{{breakDurationInMinuteView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Start Day :</div>
+                <div> {{shiftStartDayView}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Start Time : </div>
+                <div>{{startTimeView | date: 'h:mm a'}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>End Time :</div>
+                <div>{{endTimeView | date: 'h:mm a'}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Total time : </div>
+                <div>{{shiftTotalTimeView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Overtime(OT) : </div>
+                <div>{{isOverTimeRequiredView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{remarksView}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

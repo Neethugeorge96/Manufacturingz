@@ -1,0 +1,78 @@
+<form [formGroup]="operationForm" (submit)="onSubmit()">
+    <div class="d-flex flex-wrap">
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label for="workCenterName">Workcenter</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="text" [readonly]='true' formControlName="workCenterName" class="e-input">
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label for="operationName">Operation</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="text"
+                    value="{{operationForm.controls.operationNumber.value}} - {{operationForm.controls.operationName.value}}"
+                    disabled class="e-input">
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': (yieldPercentage.invalid && (yieldPercentage.dirty || yieldPercentage.touched))}">
+            <div>
+                <label for="yieldPercentage"
+                    [ngClass]="{'e-error': yieldPercentage.invalid && (yieldPercentage.dirty || yieldPercentage.touched || submitClicked)}">
+                    Yield %</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="number" formControlName="yieldPercentage" class="e-input">
+                <div *ngIf="yieldPercentage.invalid && (yieldPercentage.dirty || yieldPercentage.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="yieldPercentage.errors.required">
+                        Yield is required.
+                    </div>
+                    <div *ngIf="yieldPercentage.errors.max">
+                        Yield cannot be more than 100.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6 ">
+            <div>
+                <label for="isByProductGenerated">Byproduct generated</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-switch id="checked" class="e-input" formControlName="isByProductGenerated">
+                </ejs-switch>
+            </div>
+        </div>
+        <div *ngIf="operationForm.controls.isByProductGenerated.value" class="form-group form-input-line col-6">
+            <div>
+                <label for="byProductPercentage"   [ngClass]="{'e-error': byProductPercentage.invalid && (byProductPercentage.dirty || byProductPercentage.touched || submitClicked)}">
+                    ByProduct %</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="number" formControlName="byProductPercentage" class="e-input"
+                    [required]="operationForm.controls.isByProductGenerated.value">
+                <div *ngIf="byProductPercentage.invalid && (byProductPercentage.dirty || byProductPercentage.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="byProductPercentage.errors.required">
+                        ByProduct is required.
+                    </div>
+                    <div *ngIf="byProductPercentage.errors.max">
+                        ByProduct cannot be more than 100.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col  d-flex justify-content-end mb-2">
+        <button ejs-button cssClass="e-outline" routerLink='/eoc/eoc-list' class="mr-2">Cancel</button>
+        <button ejs-button cssClass="e-outline" [isPrimary]="true" [disabled]="operationForm.invalid">Save</button>
+    </div>
+</form>

@@ -1,0 +1,116 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Production Routing
+    </h1>
+</div>
+<div class="card p-3">
+    <ejs-grid [dataSource]='productionRouting' [editSettings]='editSettings' [toolbar]='toolbar'
+        (actionBegin)='actionBegin($event)' gridLines='Both'>
+        <e-columns>
+            <e-column headerText='S.No.' width='55'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='manufacturedProduct' headerText='Production Item'></e-column>
+            <e-column field='productionLineName' headerText='Production Line'></e-column>
+            <e-column field='routingName' headerText='Generic Routing'> </e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+             <div [formGroup]="productionForm">
+                <table class="e-table e-inline-edit" cellspacing="0.25">
+                    <colgroup>
+                        <col width='55'>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td width='55'></td>
+                            <td class='e-rowcell'>
+                                <div class="form-group"
+                                    [ngClass]="{'e-error': manufacturedProduct.invalid && (manufacturedProduct.dirty || manufacturedProduct.touched || submitClicked)}">
+                                    <div>
+                                        <ejs-dropdownlist name="manufacturedProduct" [allowFiltering]='true'
+                                            (filtering)='onFilteringItem($event)' placeholder="Search Production Item"
+                                            formControlName="manufacturedProduct" popupHeight='120px'
+                                            [dataSource]='manufacturedItems'
+                                            (change)="checkprodRoutDuplication($event , 'manufacture')">
+                                            <ng-template #itemTemplate="" let-data="">
+                                                <span>
+                                                    <span>{{data.code}} - 
+                                                        <span class="fs-sm">
+                                                            {{data.text}}</span>
+                                                        </span>
+                                                </span>
+                                            </ng-template>
+                                        </ejs-dropdownlist>
+                                        <div *ngIf="manufacturedProduct.invalid && (manufacturedProduct.dirty || manufacturedProduct.touched || submitClicked)"
+                                            class="e-error d-block">
+                                            <div *ngIf="manufacturedProduct.errors.required">
+                                                Production Item is required.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class='e-rowcell'>
+                                <div class="form-group"
+                                    [ngClass]="{'e-error': productionLineId.invalid && (productionLineId.dirty || productionLineId.touched || submitClicked)}">
+                                    <div>
+                                        <ejs-dropdownlist name="productionLineId" [allowFiltering]='true'
+                                            (filtering)='onFilteringRes($event)'
+                                            [fields]="{text: 'productionLineName', value: 'productionLineId' }"
+                                            placeholder="Search ProductionLine" formControlName="productionLineId"
+                                            popupHeight='120px' [dataSource]='productionLines'>
+                                            <ng-template #itemTemplate="" let-data="">
+                                                <span>
+                                                    <span>{{data.productionLineCode}} - 
+                                                        <span class="fs-sm">
+                                                            {{data.productionLineName}}</span></span>
+                                                </span>
+                                            </ng-template>
+                                        </ejs-dropdownlist>
+                                        <div *ngIf="productionLineId.invalid && (productionLineId.dirty || productionLineId.touched || submitClicked)"
+                                            class="e-error d-block">
+                                            <div *ngIf="productionLineId.errors.required">
+                                                Production Line is required.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class='e-rowcell'>
+                                <div class="form-group"
+                                    [ngClass]="{'e-error': routingId.invalid && (routingId.dirty || routingId.touched || submitClicked)}">
+                                    <div>
+                                        <ejs-dropdownlist name="routingId" [allowFiltering]='true'
+                                            [fields]="{text: 'basicRoutingName', value: 'basicRoutingId' }"
+                                            placeholder="Search Routing Type" formControlName="routingId"
+                                            popupHeight='120px' [dataSource]='genericRouting'
+                                            (change)="checkprodRoutDuplication($event , 'routing')">
+                                            <ng-template #itemTemplate="" let-data="">
+                                                <span>
+                                                    <span>{{data.basicRoutingCode}} - 
+                                                        <span class="fs-sm">
+                                                            {{data.basicRoutingName}}</span></span>
+                                                </span>
+                                            </ng-template>
+                                        </ejs-dropdownlist>
+                                        <div *ngIf="routingId.invalid && (routingId.dirty || routingId.touched || submitClicked)"
+                                            class="e-error d-block">
+                                            <div *ngIf="routingId.errors.required">
+                                                Generic Routing is required.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </ng-template>
+    </ejs-grid>
+</div>

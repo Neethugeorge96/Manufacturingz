@@ -1,0 +1,57 @@
+<div class="p-3">
+    <div class="align-items-end col-6 d-flex">
+        <div>
+            <label>Batch</label>
+            <sup class="  text-danger">*</sup>
+        </div>
+        <div class="ml-2">
+            <div>
+                <ejs-dropdownlist [(ngModel)]="batch"  (change)="batchChanged($event)" [dataSource]='batches'
+                    placeholder="Select Batch"  [fields]="{text: 'text', value: 'value' }"
+                    [allowFiltering]='true' ></ejs-dropdownlist>
+            </div>
+        </div>
+        <span *ngIf="showErrorMsg" style="padding-left: 5px;color: red;">Select Batch</span>
+      
+    </div>  
+    <div *ngIf="routesForCurrentBatch"  class="d-flex flex-wrap mt-3">
+        <div class="col-4 border shadow-inset-3 p-3">
+            <div id='treeparent'>
+                <ejs-treeview id='treeelement' (nodeSelecting)="onNodeSelecting($event)" [fields]='field'>
+                </ejs-treeview>
+            </div>
+        </div>
+        <div class="col-8 border shadow-inset-3">
+            <div [ngSwitch]="type" class="p-3">
+                <div *ngSwitchCase="'RO'">
+                    <app-po-route-view [route]="selectedNode"></app-po-route-view>
+                </div>
+                <div *ngSwitchCase="'OP'">
+                    <app-po-operation-view [operation]="selectedNode" [routeId]="routeData?.routingId" (rowChanged)="listAltered($event)">
+                    </app-po-operation-view>
+                </div>
+                <div *ngSwitchCase="'TA'">
+                    <app-po-task-view [task]="selectedNode" ></app-po-task-view>
+                </div>
+                <div *ngSwitchCase="'MC'">
+                    <app-po-machine-view [routeData]="selectedNode" [task]="task" [operation]="operation" ></app-po-machine-view>
+                </div>
+                <div *ngSwitchCase="'MP'">
+                    <app-po-manpower-view [routeData]="selectedNode" [task]="task"></app-po-manpower-view>
+                </div>
+                <div *ngSwitchCase="'CL'">
+                    <app-po-checklist-view [routeData]="selectedNode" [task]="task"></app-po-checklist-view>
+                </div>
+                <div *ngSwitchDefault>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div  class="button-right-wrapper mt-3">
+
+        <button ejs-button (click)="previous()" cssClass="e-outline">Previous</button>
+    
+        <button (click)="submit()" ejs-button cssClass="e-outline ml-3" [isPrimary]="true">Save </button>
+    </div>
+</div>

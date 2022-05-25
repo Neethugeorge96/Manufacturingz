@@ -1,0 +1,48 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        {{eocheaderName}}
+    </h1>
+    <button [routerLink]="['../']" routerLinkActive="router-link-active"  class="btn btn-outline-primary btn-sm">
+      Back to EOC list
+      <i class="fal fa-arrow-left ml-1"></i>
+  </button>
+  </div>
+  <div id="ManPowerList" class="card p-3">
+    <ejs-tab #tab id="tab_wizard" showCloseButton=false [animation]="animation" >
+      <e-tabitems>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Basic Details </div>
+          </ng-template>
+          <ng-template #content>
+            <app-routing-create  [eocOrder]="eocOrder" (completed)="selectTab($event)" (select)="tabSelected($event)"></app-routing-create>
+            <!-- <app-routing-edit *ngIf="routingId"></app-routing-edit> -->
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Routing </div>
+          </ng-template>
+          <ng-template #content>
+            <app-eoc-routing [eocOrder]="eocOrder" (completed)="selectTab($event)" ></app-eoc-routing>
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Overhead Costs </div>
+          </ng-template>
+          <ng-template #content>
+            <app-eoc-cost-absorption [eocOrder]="eocOrder" (completed)="selectTab($event)"></app-eoc-cost-absorption>
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> BOM Costs </div>
+          </ng-template>
+          <ng-template #content>
+            <app-bom-list [eocOrder]="eocOrder" (completed)="selectTab($event)"></app-bom-list>
+          </ng-template>
+        </e-tabitem>
+      </e-tabitems>
+    </ejs-tab>
+  </div>

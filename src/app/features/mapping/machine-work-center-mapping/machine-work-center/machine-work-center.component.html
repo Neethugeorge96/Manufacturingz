@@ -1,0 +1,178 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Machine to Workcenter
+    </h1>
+</div>
+<div class="card p-3">
+    <div class="d-flex flex-wrap align-items-baseline mb-2">
+        <div class=" align-items-center d-flex form-group col-8">
+            <label class="text-nowrap fs-sm pr-1 text-right col-2">Select Workcenter</label>
+            <sup class="text-danger">*</sup>
+            <ejs-dropdownlist class="ml-1 col-4" placeholder="Search a workcenter" [(ngModel)]="currentCenter"
+                (ngModelChange)="centerSelected($event)" [dataSource]='workCenters' popupHeight='150px'
+                floatLabelType='Never' [allowFiltering]='true' (filtering)='onFilteringWC($event)'
+                [itemTemplate]="WcCode" [valueTemplate]="WcCode" [fields]="{text: 'workCenterName', value: 'id' }">
+            </ejs-dropdownlist>
+            <span class="mt-1">
+                <ng-template #WcCode let-data>
+                    <span> {{data.workCenterCode}} </span> - 
+                    <span class="fs-sm"> {{data.workCenterName}} </span>
+                </ng-template>
+            </span>
+            <span *ngIf="showErrorMsg" style="padding-left: 5px;color: red;">Select Workcenter</span>
+        </div>
+    </div>
+    <ejs-grid *ngIf="currentCenter" [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar'
+        (toolbarClick)='clickHandler($event)' (commandClick)='commandClick($event)' gridLines='Both'
+        (actionComplete)='actionComplete($event)' (actionBegin)='actionBegin($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='45'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='machineName' headerText='Machine' width='120' isPrimaryKey='true'></e-column>
+            <e-column field='costRatePerHour' headerText='Cost Rate/Hr' width='120'></e-column>
+            <e-column field='currencyCode' headerText='Currency' width='120'></e-column>
+            <e-column field='cpcName' headerText='Cost Price Component' width='130'>
+            </e-column>
+            <e-column field='description' headerText='Remarks' width='150'></e-column>
+            <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="orderForm">
+                <div class="d-flex flex-wrap">
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': machineId.invalid && (machineId.dirty || machineId.touched || submitClicked)}">
+                        <div>
+                            <label for="machineId">Machine Code/Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist id='atcelement' formControlName="machineId" name='machineId' 
+                                [dataSource]='machines' [allowFiltering]='true'
+                                (filtering)='onFilteringResMachine($event)' placeholder="Search a machine"
+                                (change)="checkCPCDuplication($event , 'machine')" autofocus>
+                            </ejs-dropdownlist>
+                            <div *ngIf="machineId.invalid && (machineId.dirty || machineId.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="machineId.errors.required">
+                                    Machine is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': costRatePerHour.invalid && (costRatePerHour.dirty || costRatePerHour.touched || submitClicked)}">
+                        <div>
+                            <label for="costRatePerHour">Cost Rate/Hr</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input e-field" name='costRatePerHour' id ='costRatePerHour' formControlName="costRatePerHour" type="number"/>
+                            <div *ngIf="costRatePerHour.invalid && (costRatePerHour.dirty || costRatePerHour.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="costRatePerHour.errors.required">
+                                    Cost Rate/Hr is required. 
+                                </div>
+                                <div *ngIf="costRatePerHour.errors.max">
+                                    Cost Rate/Hr cannot be  more than 6 characters. 
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': cPCCode.invalid && (cPCCode.dirty || cPCCode.touched || submitClicked)}">
+                        <div>
+                            <label for="cPCCode">CPC Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist id="cPCCode" name="cPCCode" formControlName="cPCCode"
+                                [dataSource]='costPrices' popupHeight='300px' floatLabelType='Never'
+                                [allowFiltering]='true' placeholder="Search a CPC"
+                                (change)="checkCPCDuplication($event , 'cpcName')" [itemTemplate]="cpcTemplate"
+                                [valueTemplate]="cpcTemplate" (filtering)='onFilteringRes($event)'>
+                            </ejs-dropdownlist>
+                            <span class="mt-1">
+                                <ng-template #cpcTemplate let-data>
+                                    <span>{{data.cpcCode}}</span> - 
+                                    <span class="fs-sm"> {{data.cpcName}}</span>
+                                </ng-template>
+                            </span>
+                            <div *ngIf="cPCCode.invalid && (cPCCode.dirty || cPCCode.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="cPCCode.errors.required">
+                                    CPC is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div class="mt-1">
+                            <label> Currency</label>
+                            <!-- <sup class="text-danger">*</sup> -->
+                        </div>
+                        <div>INR</div>
+                    </div>
+                    <div class="form-group form-input-line col-12 " [ngClass]="{'e-error': descriptionCtrl.invalid && (descriptionCtrl.dirty || descriptionCtrl.touched || submitClicked)}">
+                        <div>
+                            <label for="description">Remarks</label>
+                        </div>
+                        <div>
+                            <textarea type="text" class=" e-input" formControlName="description"></textarea>
+                            <div *ngIf="descriptionCtrl.invalid && (descriptionCtrl.dirty || descriptionCtrl.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="descriptionCtrl.errors.maxlength">
+                                    Remarks cannot be  more than 128 characters. 
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ejs-grid>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Machines to Workcenter Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div>Workcenter Name : </div>
+                <div> {{workCenterName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Machine Name : </div>
+                <div> {{machineName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> Cost Rate/Hr : </div>
+                <div> {{dataForView?.costRatePerHour}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> CPC Name : </div>
+                <div> {{cpcName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{description}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-btn-sm btn-outline-secondary m-0"
+            (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

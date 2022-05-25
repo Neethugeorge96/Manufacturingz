@@ -1,0 +1,12 @@
+<div  id="container" style="height:300px" class="control-section">
+	<div class="col-lg-9">
+		<div class="control_wrapper">
+      <button (click)="importFile($event)">Import</button>
+      <div id="dialog">
+        </div>
+			<ejs-uploader #defaultupload id='defaultfileupload' [dropArea]='dropElement' (selected)='onFileRemove($event)' (change)="onSuccess($event)"></ejs-uploader>
+		</div>
+		<ejs-grid #grid id='grid'>
+		</ejs-grid>
+	</div>
+</div>

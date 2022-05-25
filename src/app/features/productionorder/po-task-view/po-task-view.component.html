@@ -1,0 +1,29 @@
+<div class="bg-gray-200 h5 pl-2 py-1 m-0 text-center">
+    Task Details 
+</div>
+<div class="d-flex flex-wrap">
+    <div class="view-item col-12">
+        <div>Name</div>
+        <div>{{task?.taskName}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Code</div>
+        <div>{{task?.taskCode}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Previous Task</div>
+        <div>{{taskFromRouting?.isRelatedTask?taskFromRouting?.relatedTaskId:'No'}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Quality Control Task</div>
+        <div>{{taskFromRouting?.qualityControlRequired?'Yes':'No'}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Cost Rate/hr</div>
+        <div>{{cost}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Remarks</div>
+        <div>{{taskFromRouting?.description}}</div>
+    </div>
+</div>

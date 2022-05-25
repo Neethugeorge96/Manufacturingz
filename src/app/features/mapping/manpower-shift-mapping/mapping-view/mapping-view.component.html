@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h4 class="modal-title">Manpower to Shift Details</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div><div class="view-item col-6">
+        <div class="text-left">
+            <label for="machineId">Shift Code :</label>
+        </div>
+        <div>
+           {{shiftName}}
+        </div>
+    </div></div>
+    <div class="mb-2">Employee Details</div>
+    <ejs-grid #grid [dataSource]='manpowerToShift'  gridLines='Both'>
+        <e-columns>
+            <e-column field='manpowerCategoryName'  headerText='Manpower Category' width="120"></e-column>
+            <e-column field='manpowerName'  headerText='Manpower Name' width="120"></e-column>
+        </e-columns>
+    </ejs-grid>
+</div>
+
+<div class=" mt-2 modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-secondary border-0" (click)="activeModal.close('Close click')">
+        Cancel
+    </button>
+
+</div>

@@ -1,0 +1,183 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Cost Absorption to Workcenters
+    </h1>
+</div>
+<div class="card p-3">
+    <div class="d-flex flex-wrap align-items-baseline mb-2">
+        <div class=" align-items-center d-flex form-group col-8">
+            <label class="text-nowrap fs-sm pr-1 col-2 text-right">Select Workcenter</label>
+            <sup class="text-danger">*</sup>
+            <ejs-dropdownlist class="ml-1 col-4" placeholder="Search a workcenter" [(ngModel)]="workCenterId"
+                (ngModelChange)='onOptionsSelected($event)' [dataSource]='workCenter' popupHeight='150px'
+                floatLabelType='Never' [fields]="{text: 'workCenterName', value: 'id' }" [allowFiltering]='true'
+                (filtering)='onFilteringWC($event)' [itemTemplate]="WcCode" [valueTemplate]="WcCode">
+            </ejs-dropdownlist>
+            <ng-template #WcCode let-data>
+                <span>{{data.workCenterCode}}</span> -
+                <span class="fs-sm">{{data.workCenterName}} </span>
+            </ng-template>
+            <span *ngIf="showErrorMsg" style="padding-left: 5px;color: red;">Select Workcenter</span>
+        </div>
+    </div>
+    <ejs-grid *ngIf="workCenterId" [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar'
+        (actionBegin)='actionBegin($event)' (commandClick)='commandClick($event)' gridLines='Both'
+        (actionComplete)='actionComplete($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='30'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='cpcName' headerText='Cost Price Component' width='120' isPrimaryKey='true'></e-column>
+            <e-column field='costAbsorpationBasis' [valueAccessor]='getCostAbsorptionTypeName'
+                headerText='Cost Absorption Basis' width='120'></e-column>
+            <e-column field='costAbsorptionRatePerHour' headerText='Cost Rate/Hr' width='100'></e-column>
+            <e-column field='description' headerText='Remarks' width='150'></e-column>
+            <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="orderForm">
+                <div class="d-flex flex-wrap">
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': cpcNameCtrl.invalid && (cpcNameCtrl.dirty || cpcNameCtrl.touched || submitClicked)}">
+                        <div>
+                            <label for="cpcName">
+                                Cost Price Component</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="cpcName" [allowFiltering]='true'
+                                (filtering)='onFilteringItem($event)' placeholder="Search a type"
+                                formControlName="cpcName" popupHeight='150px' [dataSource]='cpcList'
+                                (change)="checkCPCDuplication($event , 'cpcName')" autofocus>
+                                <ng-template #itemTemplate="" let-data="">
+                                    <span>
+                                        <span>{{data.cpcCode}} -
+                                            <span class="fs-sm">
+                                                {{data.text}}</span>
+                                        </span>
+                                    </span>
+                                </ng-template>
+                            </ejs-dropdownlist>
+                            <div *ngIf="cpcNameCtrl.invalid && (cpcNameCtrl.dirty || cpcNameCtrl.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="cpcNameCtrl.errors.required">
+                                    Cost Price Component is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': costAbsorpationBasisCtrl.invalid && (costAbsorpationBasisCtrl.dirty || costAbsorpationBasisCtrl.touched || submitClicked)}">
+                        <div>
+                            <label for="costAbsorpationBasis">
+                                Cost Absorption Basis</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist formControlName="costAbsorpationBasis" popupHeight='120px'
+                                placeholder="Search Basic Cost" [fields]="{text: 'text', value: 'value' }"
+                                [dataSource]='costAbsorpationTypes'
+                                (change)="checkCPCDuplication($event , 'costabsorption')">
+                            </ejs-dropdownlist>
+                            <div *ngIf="costAbsorpationBasisCtrl.invalid && (costAbsorpationBasisCtrl.dirty || costAbsorpationBasisCtrl.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="costAbsorpationBasisCtrl.errors.required">
+                                    Cost Absorption Basis is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="costAbsorpationBasis">Cost Absorpation Basis</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="costAbsorpationBasis"  placeholder="Search Basic Cost"
+                            formControlName="costAbsorpationBasis"[fields]="{text: 'text', value: 'value' }" [allowFiltering]='true' popupHeight='150px'
+                            [dataSource]='costAbsorpationTypes' (change)="checkCPCDuplication($event , 'costabsorption')" ></ejs-dropdownlist>
+                        </div>  
+                    </div> -->
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': costAbsorptionRatePHour.invalid && (costAbsorptionRatePHour.dirty || costAbsorptionRatePHour.touched || submitClicked)}">
+                        <div>
+                            <label for="costAbsorptionRatePerHour">
+                                Cost Absorption Rate/Hr</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input e-field" name='costAbsorptionRatePerHour'
+                                formControlName="costAbsorptionRatePerHour" type="number" #costAbsorptionRatePerHour />
+                            <div *ngIf="costAbsorptionRatePHour.invalid && (costAbsorptionRatePHour.dirty || costAbsorptionRatePHour.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="costAbsorptionRatePHour.errors.required">
+                                    Cost Absorption Rate/Hr is required.
+                                </div>
+                                <div *ngIf="costAbsorptionRatePHour.errors.max">
+                                    Cost Absorption Rate/Hr cannot be more than 6 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-12 "  [ngClass]="{'e-error': descriptionCtrl.invalid && (descriptionCtrl.dirty || descriptionCtrl.touched || submitClicked)}">
+                        <div>
+                            <label for="description">Remarks</label>
+                        </div>
+                        <div>
+                            <textarea type="text" class=" e-input" formControlName="description"></textarea>
+                            <div *ngIf="descriptionCtrl.invalid && (descriptionCtrl.dirty || descriptionCtrl.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="descriptionCtrl.errors.maxlength">
+                                    Remarks cannot be more than 128 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ejs-grid>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Cost Absorption to Workcenter Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div>Workcenter Name : </div>
+                <div> {{workCenterName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> CPC Name : </div>
+                <div> {{cpcName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Cost Absorpation Basis : </div>
+                <div> {{costAbsorpationBasis}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Cost Absorption Rate/Hr : </div>
+                <div> {{costAbsorptionRatePerHour}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{description}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

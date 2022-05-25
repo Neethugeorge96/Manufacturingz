@@ -1,0 +1,32 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+    Time Sheet Updation
+  </h1>
+  <button [routerLink]="['/release-to-production/release-production-list/edit/'+pOrderId]"
+    class="btn btn-outline-primary btn-sm">
+    Back to RP
+    <i class="fal fa-arrow-left ml-1"></i>
+  </button>
+</div>
+<div id="ManPowerList" class="card p-3">
+  <ejs-tab #tab id="tab_wizard" showCloseButton=false [animation]="animation">
+    <e-tabitems>
+      <e-tabitem>
+        <ng-template #headerText>
+          <div> Time Sheet </div>
+        </ng-template>
+        <ng-template #content>
+          <app-time-sheet-updation></app-time-sheet-updation>
+        </ng-template>
+      </e-tabitem>
+      <e-tabitem>
+        <ng-template #headerText>
+          <div> Upload </div>
+        </ng-template>
+        <ng-template #content>
+          <app-time-sheet-upload></app-time-sheet-upload>
+        </ng-template>
+      </e-tabitem>
+    </e-tabitems>
+  </ejs-tab>
+</div>

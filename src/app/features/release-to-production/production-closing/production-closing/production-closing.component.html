@@ -1,0 +1,53 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Production Closing
+    </h1>
+    <button [routerLink]="['/release-to-production/release-production-list/edit/'+poId]"
+        class="btn btn-outline-primary btn-sm">
+        Back to RP
+        <i class="fal fa-arrow-left ml-1"></i>
+    </button>
+</div>
+<div class="card p-3">
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-primary btn-sm mb-3" (click)="openProductionClosePopup()">
+            Production Closing
+        </button>
+    </div>
+    <div *ngIf="batches.length" class="d-flex flex-wrap">
+        <div class="col-4 border shadow-inset-3 p-3">
+            <div id='treeparent'>
+                <ejs-treeview id='treeelement' (nodeSelecting)="onNodeSelecting($event)" [fields]='field'>
+                </ejs-treeview>
+            </div>
+        </div>
+        <div class="col-8 border shadow-inset-3">
+            <div [ngSwitch]="type" class="p-3">
+                <div *ngSwitchCase="'BA'">
+                    <app-production-order-batch-view [batchWise]="batchWise">
+                    </app-production-order-batch-view>
+                </div>
+                <div *ngSwitchCase="'OP'">
+                    <app-production-order-operation-view [operationWise]="operationWise">
+                    </app-production-order-operation-view>
+                </div>
+                <div *ngSwitchCase="'TA'">
+                    <app-production-order-task-view [taskWise]="taskWise"></app-production-order-task-view>
+                </div>
+                <div *ngSwitchDefault>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div #container class='root-container'>
+    <ejs-dialog id='dialog' #ejDialog isModal='true' header='Production Closing' showCloseIcon='true' width='50%'
+        [visible]='false'>
+        <ng-template #content>
+            <app-add-production-closing [batchFirstData]="batchFirstData" [sumOfBatchOutput]="sumOfBatchOutput"
+                (productionCloseEvent)="productionCloseItem($event)" (closeEvent)="ClosePopup($event)">
+            </app-add-production-closing>
+        </ng-template>
+    </ejs-dialog>
+</div>

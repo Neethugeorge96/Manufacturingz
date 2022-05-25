@@ -1,0 +1,41 @@
+<div class="card p-3">
+    <ejs-grid #grid [dataSource]='materiallssue' [toolbar]='toolbar' gridLines='Both' [editSettings]='editSettings'
+        (headerCellInfo)='headerCellInfo($event)' (commandClick)='commandClick($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='50'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='materialRequestNumber' headerText='Material Request No' isPrimaryKey='true' width='80'>
+            </e-column>
+            <e-column field='requestedDate' headerText='Date' type="date" [format]='dateFormat' width='110'></e-column>
+            <e-column field='workCenterName' headerText='Workcenter' width='100'></e-column>
+            <e-column field='numberOfRequestedItems' headerText='No:Of Items Requested' width='110'></e-column>
+            <e-column field='requestMaterialFromName' headerText='From Warehouse ' width='110'></e-column>
+            <e-column field='requestMaterialToName' headerText='To Warehouse ' width='110'></e-column>
+            <e-column field='requestedBy' headerText='Requested By' width='110'></e-column>
+            <e-column field='status' headerText='Status' width="100">
+                <ng-template #template let-d>
+                    <div>
+                        <span class="e-badge e-badge-draft" *ngIf="d.status === materialIssueStatus['SaveAsDraft']">Save
+                            As Draft</span>
+                        <span class="e-badge e-badge-pending"
+                            *ngIf="d.status === materialIssueStatus['Requested']">Requested</span>
+                        <span class="e-badge e-badge-approved"
+                            *ngIf="d.status === materialIssueStatus['Approved']">Approved</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['OnHold']">On-Hold</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['Rejected']">Rejected</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['Collected']">Collected</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['Cancelled']">Cancelled</span>
+                    </div>
+                </ng-template>
+            </e-column>
+            <e-column headerText='Actions' width='70' [commands]='commands'></e-column>
+        </e-columns>
+    </ejs-grid>
+</div>

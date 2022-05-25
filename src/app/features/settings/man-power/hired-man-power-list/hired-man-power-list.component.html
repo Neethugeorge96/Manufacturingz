@@ -1,0 +1,354 @@
+<div class="p-3">
+    <div>
+        <ejs-grid [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar' gridLines='Both'
+            (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)'
+            (commandClick)='commandClick($event)' (queryCellInfo)='queryCellInfo($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='40'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='manpowerCode' headerText=' Code' width='100'></e-column>
+                <e-column field='manpowerName' headerText='Name' isPrimaryKey='true' width='120'></e-column>
+                <e-column field='manpowerCategory' headerText='Category' width='120'></e-column>
+                <e-column field='email' headerText='Email' width='120'></e-column>
+                <e-column field='phoneText' headerText='Phone' width='130'></e-column>
+                <e-column field='remarks' headerText='Remarks' width='150'></e-column>
+                <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="addForm">
+                    <div class="d-flex flex-wrap align-items-center mb-4">
+
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': manpowerCode.invalid && (manpowerCode.dirty || manpowerCode.touched || submitClicked)}">
+                            <div>
+                                <label for="manpowerCode">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input class="e-input" formControlName="manpowerCode" id="manpowerCode"
+                                    name="manpowerCode" type="text">
+                                <div *ngIf="manpowerCode.invalid && (manpowerCode.dirty || manpowerCode.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="manpowerCode.errors.duplicate">
+                                        Code already exists.
+                                    </div>
+                                    <div *ngIf="manpowerCode.errors.required">
+                                        Code is required.
+                                    </div>
+                                    <div *ngIf="manpowerCode.errors.maxlength">
+                                        Code cannot be more than 4 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': manpowerName.invalid && (manpowerName.dirty || manpowerName.touched || submitClicked)}">
+                            <div>
+                                <label for="manpowerName">Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input class="e-input" formControlName="manpowerName" id="manpowerName"
+                                    name="manpowerName" type="text">
+                                <div *ngIf="(manpowerName.invalid && (manpowerName.dirty || manpowerName.touched))||(manpowerName.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="manpowerName.errors.required">
+                                        Name is required.
+                                    </div>
+                                    <div *ngIf="manpowerName.errors.maxlength">
+                                        Name cannot be more than 32 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': manpowerCategoryId.invalid && (manpowerCategoryId.dirty || manpowerCategoryId.touched || submitClicked)}">
+                            <div>
+                                <label for="manpowerCategoryId">Category</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist formControlName="manpowerCategoryId" id='manpowerCategoryId'
+                                    [dataSource]='manPowerCategories' [fields]='fields' placeholder="Select Category">
+                                </ejs-dropdownlist>
+                                <div *ngIf="manpowerCategoryId.invalid && (manpowerCategoryId.dirty || manpowerCategoryId.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="manpowerCategoryId.errors.required">
+                                        Category is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched || submitClicked)}">
+                            <div>
+                                <label for="email">Email</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input class="e-input" formControlName="email" id="email" name="email" type="email">
+                                <div *ngIf="(emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched))||(emailCtrl.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="emailCtrl.errors.required">
+                                        Email is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': phone.invalid && (phone.dirty || phone.touched || submitClicked)}">
+                            <div>
+                                <label for="phone">Phone</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-maskedtextbox mask='\\+000-0000000' name="phone" formControlName="phone">
+                                </ejs-maskedtextbox>
+                                <div *ngIf="(phone.invalid && (phone.dirty || phone.touched))||(phone.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="phone.errors.required">
+                                        Phone number is required.
+                                    </div>
+                                    <div *ngIf="phone.errors.maxlength">
+                                        Phone number cannot be more than 15 characters.
+                                    </div>
+                                </div>
+                                <!-- <ejs-datepicker id="OrderDate" name="OrderDate"  formControlName="orderData.OrderDate" placeholder="Order Date" floatLabelType='Always'></ejs-datepicker> -->
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-12 "
+                            [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                            <div>
+                                <label for="remarks">Remarks</label>
+                            </div>
+                            <div>
+                                <textarea type="text" class=" e-input" name="remarks"
+                                    formControlName="remarks"></textarea>
+                                <div *ngIf="(remarks.invalid && (remarks.dirty || remarks.touched))||(remarks.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="remarks.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ejs-grid [dataSource]='assignedSuppliers' [editSettings]='modaleditSettings' [toolbar]='modalToolbar'
+                    (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)'>
+                    <e-columns>
+                        <e-column headerText='S.No.' [allowEditing]="false" width='60'>
+                            <ng-template #template let-d>
+                                <div>{{ +d.index+1 }} </div>
+                            </ng-template>
+                        </e-column>
+                        <e-column field='poReference' headerText='PO Reference' width='175'></e-column>
+                        <e-column field='supplierName' headerText='Supplier' width='175'></e-column>
+                        <e-column field='costRatePerHour' headerText='Cost Rate/Hour' width='120'>
+                        </e-column>
+                        <e-column field='startDate' type="date" [format]="{ type: 'date', skeleton: 'medium' }"
+                            headerText='Start Date' width='175'></e-column>
+                        <e-column field='endDate' type="date" [format]="{ type: 'date', skeleton: 'medium' }"
+                            headerText='End Date' width='175'>
+                        </e-column>
+                    </e-columns>
+                    <ng-template #editSettingsTemplate let-data>
+                        <div [formGroup]="supplierForm">
+                            <table class="e-table e-inline-edit" cellspacing="0.25">
+                                <colgroup>
+                                    <col width='60'>
+                                    <col width='175'>
+                                    <col width='175'>
+                                    <col width='120'>
+                                    <col width='175'>
+                                    <col width='175'>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td width='60'></td>
+                                        <td class='e-rowcell' width='175'>
+                                            <div class="form-group"
+                                                [ngClass]="{'e-error': poReference.invalid && (poReference.dirty || poReference.touched || supplierSubmitClicked)}">
+
+                                                <div>
+                                                    <ejs-dropdownlist formControlName="poReference" id='poReference'
+                                                        [allowFiltering]="true" [dataSource]='pOList'
+                                                        [fields]="{ value: 'text', text: 'text' }"
+                                                        placeholder="Select PO Reference">
+                                                    </ejs-dropdownlist>
+                                                    <div *ngIf="poReference.invalid && (poReference.dirty || poReference.touched || supplierSubmitClicked)"
+                                                        class="e-error d-block" style="width: 150px;">
+                                                        <div *ngIf="poReference.errors.required">
+                                                            PO Reference is required.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class='e-rowcell' width='175'>
+                                            <div class="form-group"
+                                                [ngClass]="{'e-error': supplierName.invalid && (supplierName.dirty || supplierName.touched || supplierSubmitClicked)}">
+                                                <div>
+                                                    <ejs-dropdownlist formControlName="supplierName" id='supplierName'
+                                                        [allowFiltering]="true" [dataSource]='allSuppliers'
+                                                        [fields]="{ value: 'text', text: 'text' }"
+                                                        placeholder="Select Supplier">
+                                                    </ejs-dropdownlist>
+                                                    <div *ngIf="supplierName.invalid && (supplierName.dirty || supplierName.touched || supplierSubmitClicked)"
+                                                        class="e-error d-block" style="width: 150px;">
+                                                        <div *ngIf="supplierName.errors.required">
+                                                            Supplier is required.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class='e-rowcell' width='120'>
+                                            <div class="form-group"
+                                                [ngClass]="{'e-error': costRatePerHour.invalid && (costRatePerHour.dirty || costRatePerHour.touched || supplierSubmitClicked)}">
+                                                <div>
+                                                    <ejs-numerictextbox class="e-input e-field" id="costRatePerHour"
+                                                        formControlName="costRatePerHour" name="costRatePerHour"
+                                                        [showSpinButton]='false'>
+                                                    </ejs-numerictextbox>
+                                                    <div *ngIf="costRatePerHour.invalid && (costRatePerHour.dirty || costRatePerHour.touched || supplierSubmitClicked)"
+                                                        class="e-error d-block" style="width: 100px;">
+                                                        <div *ngIf="costRatePerHour.errors.required">
+                                                            Cost Rate/Hour is required.
+                                                        </div>
+                                                        <div *ngIf="costRatePerHour.errors.max">
+                                                            Cost Rate/Hour cannot be more than 6 characters.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class='e-rowcell' width='175'>
+                                            <div class="form-group"
+                                                [ngClass]="{'e-error': startDate.invalid && (startDate.dirty || startDate.touched || supplierSubmitClicked)}">
+                                                <div>
+                                                    <ejs-datepicker format='dd-MM-yyyy' placeholder='Select date'
+                                                        formControlName="startDate" id="startDate" name="startDate">
+                                                    </ejs-datepicker>
+                                                    <div *ngIf="startDate.invalid && (startDate.dirty || startDate.touched || supplierSubmitClicked)"
+                                                        class="e-error d-block" style="width: 150px;">
+                                                        <div *ngIf="startDate.errors.required">
+                                                            Start Date is required.
+                                                        </div>
+                                                        <div *ngIf="startDate.errors.taken">
+                                                            Dates are already assigned.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class='e-rowcell' width='175'>
+                                            <div class="form-group"
+                                                [ngClass]="{'e-error': endDate.invalid && (endDate.dirty || endDate.touched || supplierSubmitClicked)}">
+                                                <div>
+                                                    <ejs-datepicker format='dd-MM-yyyy' placeholder='Select date'
+                                                        formControlName="endDate" id="endDate" name="endDate">
+                                                    </ejs-datepicker>
+                                                    <div *ngIf="endDate.invalid && (endDate.dirty || endDate.touched || supplierSubmitClicked)"
+                                                        class="e-error d-block" style="width: 150px;">
+                                                        <div *ngIf="endDate.errors.required">
+                                                            End Date is required.
+                                                        </div>
+                                                        <div *ngIf="endDate.errors.earlier">
+                                                            End Date is earlier to Start Date.
+                                                        </div>
+                                                        <div *ngIf="endDate.errors.taken">
+                                                            Dates are already assigned.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width='60'></td>
+                                        <td width='175'></td>
+                                        <td width='175'></td>
+                                        <td width='120'></td>
+                                        <td width='175'></td>
+                                        <td width='175'></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </ng-template>
+                </ejs-grid>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Hired Manpower Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div> {{manpowerForView['manpowerCode']}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Manpower Name : </div>
+                <div> {{manpowerForView['manpowerName']}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Manpower Category : </div>
+                <div> {{manpowerForView['manpowerCategory']}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Email:</div>
+                <div> {{manpowerForView['email']}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> Phone Number :</div>
+                <div>{{manpowerForView['phone']}} </div>
+            </div>
+
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{manpowerForView['remarks']}} </div>
+            </div>
+        </div>
+        <div *ngIf="viewSuppliers.length" class="fs-sm text-center" style="font-weight: 500;"> Suppliers List</div>
+        <table *ngIf="viewSuppliers.length" class="table table-bordered table-sm">
+            <thead class="thead-light">
+                <th>Supplier</th>
+                <th>Po reference</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let supplier of viewSuppliers">
+                    <td>{{supplier.supplierName}}</td>
+                    <td>{{supplier.poReference}}</td>
+                    <td>{{supplier.startDate | date:'mediumDate'}}</td>
+                    <td>{{supplier.endDate | date:'mediumDate'}}</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

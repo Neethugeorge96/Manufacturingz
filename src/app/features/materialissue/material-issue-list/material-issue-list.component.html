@@ -1,0 +1,101 @@
+
+<div class="card p-3">
+    <ejs-grid #grid [dataSource]='materiallssue' [toolbar]='toolbar' (commandClick)='commandClick($event)'
+        (toolbarClick)='clickHandler($event)' gridLines='Both' [editSettings]='editSettings'
+        (headerCellInfo)='headerCellInfo($event)' (queryCellInfo)='queryCellInfo($event)'
+        (actionBegin)='actionBegin($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='50'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='materialRequestNumber' headerText='Material Request No' isPrimaryKey='true' width='100'>
+            </e-column>
+            <e-column field='requestedDate' headerText='Requested Date' type="date" [format]='dateFormat' width='120'>
+            </e-column>
+            <e-column field='workCenterName' headerText='Workcenter' width='120'></e-column>
+            <e-column field='numberOfRequestedItems' headerText='No:Of Items Requested' width='100'></e-column>
+            <e-column field='requestMaterialFromName' headerText='From Warehouse' width='120'></e-column>
+            <e-column field='requestMaterialToName' headerText='To Warehouse' width='120'></e-column>
+            <e-column field='requestedBy' headerText='Request By' width='120'></e-column>
+            <e-column headerText='Status' width="110">
+                <ng-template #template let-d>
+                    <div>
+                        <span class="e-badge e-badge-draft" *ngIf="d.status === materialIssueStatus['SaveAsDraft']">Save
+                            As Draft</span>
+                        <span class="e-badge e-badge-pending"
+                            *ngIf="d.status === materialIssueStatus['Requested']">Requested</span>
+                        <span class="e-badge e-badge-approved"
+                            *ngIf="d.status === materialIssueStatus['Approved']">Approved</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['OnHold']">On-Hold</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['Rejected']">Rejected</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['Collected']">Collected</span>
+                        <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === materialIssueStatus['Cancelled']">Cancelled</span>
+                    </div>
+                </ng-template>
+            </e-column>
+
+
+            <e-column headerText='Actions' width='120' [commands]='commands'></e-column>
+        </e-columns>
+    </ejs-grid>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Material Issue Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Material Request No :</div>
+                <div> {{materialRequestNo}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Requested Date : </div>
+                <div> {{requestedDate | date: 'dd-MM-yyyy'}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Workcenter : </div>
+                <div> {{workCenterName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>No:Of Requested Items :</div>
+                <div> {{numberOfRequestedItems}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> From Warehouse :</div>
+                <div>{{requestMaterialFromName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> To Warehouse :</div>
+                <div>{{requestMaterialToName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Requested By : </div>
+                <div>{{requestedBy}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Status : </div>
+                <div>{{status}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

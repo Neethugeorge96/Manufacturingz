@@ -1,0 +1,282 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Edit Material Issue
+    </h1>
+    <button class="btn btn-outline-primary btn-sm" routerLink="/materialissue/material-issue-container"><i
+            class="fal fa-arrow-left mr-2"></i> Back to Material Issue</button>
+</div>
+
+<form [formGroup]="materialIssueForm">
+    <div class="d-flex flex-wrap mb-3 col-md-10">
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>Material Request No</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="text" [readonly]="true" disabled class="e-input" formControlName="materialRequestNumber">
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>Workcenter</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-dropdownlist [dataSource]='workCenter' [readonly]="true"
+                    [fields]="{text: 'workCenterName', value: 'workCenterCode' }" formControlName="workCenterCode"
+                    placeholder="Search" [allowFiltering]='true'>
+                </ejs-dropdownlist>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>From Warehouse</label>
+                <sup class="text-danger">*</sup>
+            </div>
+
+            <div>
+                <ejs-dropdownlist [dataSource]='materialIssueFrom' [readonly]="true"
+                    [fields]="{text: 'name', value: 'code' }" formControlName="requestMaterialFromCode"
+                    (change)="onChangeMaterialIssueFrom($event)" placeholder="Search" [allowFiltering]='true'>
+                </ejs-dropdownlist>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>To Warehouse</label>
+                <sup class="text-danger">*</sup>
+            </div>
+
+            <div>
+                <ejs-dropdownlist [dataSource]='materialIssueTo' [readonly]="true"
+                    formControlName="requestMaterialToCode" [fields]="{text: 'name', value: 'code' }"
+                    (change)="onChangeMaterialIssueTo($event)" placeholder="Search" [allowFiltering]='true'>
+                </ejs-dropdownlist>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>Date</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-datepicker placeholder='Choose a date' [readonly]="true" formControlName="requestedDate">
+                </ejs-datepicker>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label>Requested By</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="text" [readonly]="true" formControlName="requestedBy" class="e-input">
+            </div>
+        </div>
+        <div class="form-group form-input-line col-12">
+            <div>
+                <label>Remarks</label>
+            </div>
+            <div>
+                <textarea type="text" formControlName="remarks" [readonly]="true" class="e-input"></textarea>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="card p-3">
+    <div id="GridParent">
+        <ejs-grid #Grid [dataSource]='detailsMaterialIssue' [toolbar]='toolbar' [editSettings]='editSettings'
+            (actionBegin)='actionBegin($event)' gridLines='Both' (headerCellInfo)='headerCellInfo($event)'
+            (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='31'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='itemCode' [visible]="false"></e-column>
+                <e-column field='itemName' headerText='Item Code/Name' isPrimaryKey='true' width='120'></e-column>
+                <e-column field='requestedQuantityUOMCode' [visible]="false"></e-column>
+                <e-column field='requestedQuantityUOMName' [visible]="false"></e-column>
+                <e-column field='requestedQuantity' headerText='Requested Qty UOM' width='110'></e-column>
+                <e-column field='stockQuantityUOMCode' [visible]="false"></e-column>
+                <e-column field='stockQuantityUOMName' [visible]="false"></e-column>
+                <e-column field='stockQuantity' headerText='Stock Qty UOM' width='110'></e-column>
+                <e-column field='suggestedQuantityUOMCode' [visible]="false"></e-column>
+                <e-column field='suggestedQuantityUOMName' [visible]="false"></e-column>
+                <e-column field='suggestedQuantity' headerText='Suggested Qty UOM' width='110'></e-column>
+                <e-column field='remarks' headerText='Remarks' width='100'></e-column>
+                <e-column headerText='Actions' width=100 [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="materialItemDetailsForm">
+                    <div class="d-flex flex-wrap">
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label
+                                [ngClass]="{'e-error': (itemName.invalid && (itemName.dirty || itemName.touched))}">Item Code/Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="hidden" formControlName="itemCode" id="itemCode" name="itemCode">
+                                <ejs-dropdownlist [dataSource]='items' formControlName="itemName" id="itemName"
+                                    name="itemName" (change)="onChangeItem($event)" placeholder="Search Item"
+                                    [fields]="{text: 'itemName', value: 'itemName' }" [allowFiltering]='true'
+                                    (filtering)='onFilteringResItem($event)' [itemTemplate]="itemCode"
+                                    [valueTemplate]="itemCode" autofocus>
+                                    <ng-template #itemCode let-data>
+                                        <span>{{data.itemName}}</span>
+                                        <span class="fs-sm float-right "> {{data.itemCode}}</span>
+                                    </ng-template>
+                                </ejs-dropdownlist>
+                                <div *ngIf="(itemName.invalid && (itemName.dirty || itemName.touched))||(itemName.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="itemName.errors.required">
+                                    Item Name is required.
+                                </div>
+                            </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label
+                                [ngClass]="{'e-error': (requestedQuantityUOMName.invalid && (requestedQuantityUOMName.dirty || requestedQuantityUOMName.touched))
+                            || (requestedQuantity.invalid && (requestedQuantity.dirty || requestedQuantity.touched))}">Requested Qty UOM</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div class="col-12 d-flex">
+                                <input type="hidden" formControlName="requestedQuantityUOMCode"
+                                    id="requestedQuantityUOMCode" name="requestedQuantityUOMCode">
+                                <ejs-dropdownlist [dataSource]='uom' formControlName="requestedQuantityUOMName"
+                                    id="requestedQuantityUOMName" name=requestedQuantityUOMName
+                                    (change)="onChangeRequestedQtyUOM($event)" placeholder="Search UOM"
+                                    [fields]="{text: 'uomName', value: 'uomName' }" [allowFiltering]='true'>
+                                </ejs-dropdownlist>
+                                <div *ngIf="(requestedQuantityUOMName.invalid && (requestedQuantityUOMName.dirty || requestedQuantityUOMName.touched))||(requestedQuantityUOMName.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="requestedQuantityUOMName.errors.required">
+                                    Requested UOM is required.
+                                </div>
+                            </div>
+                                <ejs-numerictextbox class="e-input e-field" formControlName="requestedQuantity"
+                                    id="requestedQuantity" name="requestedQuantity" [showSpinButton]='false'>
+                                </ejs-numerictextbox>
+                                <div *ngIf="(requestedQuantity.invalid && (requestedQuantity.dirty || requestedQuantity.touched))||(requestedQuantity.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="requestedQuantity.errors.required">
+                                    Requested Quantity is required.
+                                </div>
+                                <div *ngIf="requestedQuantity.errors.max">
+                                    Requested Quantity cannot be more than 6 digits.
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label
+                                [ngClass]="{'e-error': (stockQuantityUOMName.invalid && (stockQuantityUOMName.dirty || stockQuantityUOMName.touched))
+                            || (stockQuantity.invalid && (stockQuantity.dirty || stockQuantity.touched))}">Stock Qty UOM </label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div class="col-12 d-flex">
+                                <input type="hidden" formControlName="stockQuantityUOMCode" id="stockQuantityUOMCode"
+                                    name="stockQuantityUOMCode">
+                                <ejs-dropdownlist [dataSource]='stockQtyUom' formControlName="stockQuantityUOMName"
+                                    id="stockQuantityUOMName" name="stockQuantityUOMName"
+                                    (change)="onChangeStockQtyUOM($event)" placeholder="Search UOM"
+                                    [fields]="{text: 'uomName', value: 'uomName' }" [allowFiltering]='true'>
+                                </ejs-dropdownlist>
+                                <div *ngIf="(stockQuantityUOMName.invalid && (stockQuantityUOMName.dirty || stockQuantityUOMName.touched))||(stockQuantityUOMName.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="stockQuantityUOMName.errors.required">
+                                    Stock UOM is required.
+                                </div>
+                            </div>
+                                <ejs-numerictextbox class="e-input e-field" [showSpinButton]='false'
+                                    formControlName="stockQuantity" id="stockQuantity" name="stockQuantity">
+                                </ejs-numerictextbox>
+                                <div *ngIf="(stockQuantity.invalid && (stockQuantity.dirty || stockQuantity.touched))||(stockQuantity.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="stockQuantity.errors.required">
+                                    Stock Quantity is required.
+                                </div>
+                                <div *ngIf="stockQuantity.errors.max">
+                                    Suggested Quantity cannot be more than 6 digits.
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label 
+                                [ngClass]="{'e-error': (suggestedQuantity.invalid && (suggestedQuantity.dirty || suggestedQuantity.touched))
+                                || (suggestedQuantityUOMName.invalid && (suggestedQuantityUOMName.dirty || suggestedQuantityUOMName.touched))}">Suggested Qty UOM</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div class="col-12 d-flex">
+                                <input type="hidden" formControlName="suggestedQuantityUOMCode"
+                                    id="suggestedQuantityUOMCode" name="suggestedQuantityUOMCode">
+                                <ejs-dropdownlist [dataSource]='suggestedQtyUom'
+                                    formControlName="suggestedQuantityUOMName" id="suggestedQuantityUOMName"
+                                    name="suggestedQuantityUOMName" (change)="onChangeSuggestedQtyUOM($event)"
+                                    placeholder="Search UOM" [fields]="{text: 'uomName', value: 'uomName' }"
+                                    [allowFiltering]='true'>
+                                </ejs-dropdownlist>
+                                <div *ngIf="(suggestedQuantityUOMName.invalid && (suggestedQuantityUOMName.dirty || suggestedQuantityUOMName.touched))||(suggestedQuantityUOMName.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="suggestedQuantityUOMName.errors.required">
+                                    Suggested UOM is required.
+                                </div>
+                            </div>
+                                <ejs-numerictextbox class="e-input e-field" [showSpinButton]='false'
+                                    formControlName="suggestedQuantity" id="suggestedQuantity" name="suggestedQuantity">
+                                </ejs-numerictextbox>
+                                <div *ngIf="(suggestedQuantity.invalid && (suggestedQuantity.dirty || suggestedQuantity.touched))||(suggestedQuantity.invalid&& submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="suggestedQuantity.errors.required">
+                                    Suggested Quantity is required.
+                                </div>
+                                <div *ngIf="suggestedQuantity.errors.max">
+                                    Suggested Quantity cannot be more than 6 digits.
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-12"  [ngClass]="{'e-error': (remarks.invalid && (remarks.dirty || remarks.touched))}">
+                            <div>
+                                <label>Remarks</label>
+
+                            </div>
+                            <div>
+                                <textarea type="text" class="e-input" formControlName="remarks" id="remarks"
+                                    name="remarks"></textarea>
+                                    <div *ngIf="(remarks.invalid && (remarks.dirty || remarks.touched))||(remarks.invalid&& submitClicked)"  class="e-error d-block">
+                               
+                                            <div *ngIf="remarks.errors.maxlength">
+                                                Remarks cannot be more than 128 characters.
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+        </ejs-grid>
+    </div>
+    <div class="modal-footer">
+        <button ejs-button cssClass="e-outline" (click)="verifyAndCollect()" [disabled]="disableverifyAndCollect"
+            [isPrimary]="true">Verify&Collect</button>
+        <button ejs-button cssClass="e-outline" (click)="saveMaterialIssue()" [disabled]="disableButton"
+            [isPrimary]="true">Save as
+            Draft</button>
+        <button ejs-button cssClass="e-outline" (click)="materiaIssueRequest()" [disabled]="disableButton"
+            [isPrimary]="true">Request</button>
+        <button ejs-button cssClass="e-outline" (click)="cancelled()" [disabled]="disableButton"
+            [isPrimary]="true">Request Cancel</button>
+
+    </div>
+</div>

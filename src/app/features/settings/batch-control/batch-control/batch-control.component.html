@@ -1,0 +1,240 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Batch Size Details
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='batchData' [editSettings]='editSettings' [toolbar]='toolbar'
+            (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)'
+            (actionComplete)='actionComplete($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='53'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='batchCode' headerText='Batch Code' isPrimaryKey='true'></e-column>
+                <e-column field='itemName' headerText='Item Code/Name'></e-column>
+                <e-column field='productionLineName' headerText='Production Line' isPrimaryKey='true'>
+                </e-column>
+                <e-column field='batchSizeMin' headerText='Batch Size (Min)' [columns]='batchSizeMin'>
+                </e-column>
+                <e-column field='batchSizeMax' headerText='Batch Size (Max)' [columns]='batchSizeMax'>
+                </e-column>
+
+
+                <e-column headerText='O/P Required'>
+                    <ng-template #template let-d>
+                        <div><span *ngIf="d.isBatchOutputRequired">Yes</span></div>
+                        <div><span *ngIf="!d.isBatchOutputRequired">No</span></div>
+                    </ng-template>
+                </e-column>
+
+                <e-column headerText='Actions' [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="batchControlForm">
+                    <div class="d-flex flex-wrap">
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="batchCode">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class="e-input" [readonly]='fieldDisable'
+                                    formControlName="batchCode">
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': itemCode.invalid && (itemCode.dirty || itemCode.touched || submitClicked)}">
+                            <div>
+                                <label for="itemName">Item Code/Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+
+                            <div>
+                                <ejs-dropdownlist formControlName="itemCode" [readonly]='fieldDisable'
+                                    [dataSource]='batchItemList' [fields]="{ value: 'itemCode' ,  text: 'itemName' }"
+                                    placeholder="Select Item"
+                                    [allowFiltering]='true' (change)="getUom($event)">
+
+                                    <ng-template #itemTemplate="" let-data="">
+                                        <div>
+                                            <div>
+                                                {{data.itemCode}} - 
+                                            </div>
+                                            <div class="float-right fs-sm">{{data.itemName}}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #valueTemplate="" let-data="">
+                                        <span title="{{data.itemCode}} - {{data.itemName}}" class='value'>{{data.itemName}}</span>
+                                    </ng-template>
+                                </ejs-dropdownlist>
+                                <div *ngIf="itemCode.invalid && (itemCode.dirty || itemCode.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="itemCode.errors.required">
+                                        Item Name is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': batchSizeMinQuantity.invalid && (batchSizeMinQuantity.dirty || batchSizeMinQuantity.touched || submitClicked)}">
+                            <div>
+                                <label for="batchSizeMin">Batch Size (Min)</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div class="col-12 d-flex">
+                                <ejs-dropdownlist class="col-8 pl-0 pr-0" formControlName="uom"
+                                    [dataSource]='batchSizeUnit' placeholder="Select UOM"
+                                    [fields]="{text: 'uomName', value: 'uomCode' }" [allowFiltering]='true'
+                                    [readonly]='true'>
+                                </ejs-dropdownlist>
+                                <input type="number" class="e-input" placeholder="Qty" formControlName="batchSizeMinQuantity" (change)="checkUOMQuantity('minQuan')">
+                                <div *ngIf="batchSizeMinQuantity.invalid && (batchSizeMinQuantity.dirty || batchSizeMinQuantity.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="batchSizeMinQuantity.errors.required">
+                                       Minimum quantity is required.
+                                    </div>
+                                    <div *ngIf="batchSizeMinQuantity.errors.maxlength">
+                                        Minimum quantity cannot be more than 10 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': batchSizeMaxQuantity.invalid && (batchSizeMaxQuantity.dirty || batchSizeMaxQuantity.touched || submitClicked)}">
+                            <div>
+                                <label for="batchSizeMax">Batch Size (Max)</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+
+                            <div class="col-12 d-flex">
+                                <ejs-dropdownlist class="col-8 pl-0 pr-0" formControlName="uom2"
+                                    [dataSource]='batchSizeUnit' placeholder="Select UOM"
+                                    [fields]="{text: 'uomName', value: 'uomCode' }" [allowFiltering]='true'
+                                    [readonly]='true'>
+                                </ejs-dropdownlist>
+
+                                <input type="number" class="e-input" placeholder="Qty" formControlName="batchSizeMaxQuantity" (change)="checkUOMQuantity('maxQuan')">
+                                <div *ngIf="batchSizeMaxQuantity.invalid && (batchSizeMaxQuantity.dirty || batchSizeMaxQuantity.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="batchSizeMaxQuantity.errors.required">
+                                        Maximum quantity is required.
+                                    </div>
+                                    <div *ngIf="batchSizeMaxQuantity.errors.maxlength">
+                                        Maximum quantity cannot be more than 10 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)}">
+                            <div>
+                                <label for="productionLineCode">Production Line</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist id='productionLine' [readonly]='fieldDisable'
+                                    [fields]="{text: 'productionLineName', value: 'productionLineCode' }"
+                                    placeholder="Search production line" [allowFiltering]='true'
+                                    formControlName="productionLineCode" [dataSource]='productionLines'
+                                    (change)="checkDuplication($event,'production')">
+                                    <ng-template #itemTemplate="" let-data="">
+                                        <span>
+                                            <span class='productionLine'>{{data.productionLineCode}} -
+                                                {{data.productionLineName}}</span>
+                                        </span>
+                                    </ng-template>
+                                </ejs-dropdownlist>
+                                <div *ngIf="productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="productionLineCode.errors.required">
+                                        Production Line is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 ">
+                            <div>
+                                <label for="batchOutput" data-toggle="tooltip" title="Enable this to ask for the batch output while closing each batch">
+                                    Batch Output Required</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-switch id="checked" class="e-input" formControlName="isBatchOutputRequired"> 
+                                </ejs-switch>
+                             </div>
+                        </div>
+                        <div class="form-group form-input-line col-12 " [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                            <div>
+                                <label for="remarks">Remarks</label>
+                            </div>
+                            <div>
+                                <textarea type="text" class="e-input" formControlName="remarks"></textarea>
+                                <div *ngIf="remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="remarks.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Batch Size Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-6">
+                <div> Code :</div>
+                <div>{{batchCode}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> Item Code/Name:</div>
+                <div>{{itemName}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div class="">Batch Size(Min):</div>
+                <div>{{SizeMin}} {{uom}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div class="">Batch Size(Max):</div>
+                <div>{{SizeMax}} {{uom}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Batch Output Required:</div>
+                <div>{{batchOutputrequired}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>Production Line :</div>
+                <div>{{productName}}</div>
+            </div>
+
+            <div class="view-item col-12 two-column">
+                <div>Remarks :</div>
+                <div>{{Remarks}}</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

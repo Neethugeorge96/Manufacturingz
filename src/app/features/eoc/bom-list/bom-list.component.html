@@ -1,0 +1,23 @@
+<div class="d-flex flex-wrap mt-3">
+    <ejs-grid [dataSource]='bomList'  gridLines='Both'>
+            <e-columns>
+                <e-column headerText='S.No.' width='30'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='itemName' headerText='Item' width='60'></e-column>
+                <e-column field='quantity' headerText='Quantity' width='60'></e-column>
+                <e-column field='uomCode' headerText='UOM' width='60'></e-column>
+                <e-column field='cpcName' headerText='CPC' isPrimaryKey='true' width='80'></e-column>
+                <e-column field='latestPurchaseCost' headerText='Unit Cost' width='80'></e-column>
+                <e-column field='movingCost' headerText='Moving wt.avg Cost' width='80'></e-column>
+                <e-column field='totalMovingCost' headerText='Total Moving wt.avg Cost' width='80'></e-column>
+                <e-column field='totalCost' headerText='Total Cost' width='80'></e-column>
+            </e-columns>
+        </ejs-grid>
+    <div  class="button-right-wrapper mt-3 ml-auto mr-2">
+        <button ejs-button (click) ="previous()" cssClass="e-outline">Preivous</button>
+        <button [routerLink]="['../']" routerLinkActive="router-link-active" ejs-button cssClass="e-outline ml-3" [isPrimary]="true">Complete </button>
+    </div>
+</div>

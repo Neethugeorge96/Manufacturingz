@@ -1,0 +1,170 @@
+<div class="p-3">
+    <div>
+        <ejs-grid #grid [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar' gridLines='Both'
+            (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)'
+            (commandClick)='commandClick($event)' (queryCellInfo)='queryCellInfo($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='45'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='manpowerCode' headerText=' Code' width='100'></e-column>
+                <e-column field='manpowerName' headerText='Name' isPrimaryKey='true' width='120'></e-column>
+                <e-column field='manpowerCategory' headerText='Category' width='120'></e-column>
+                <e-column field='email' headerText='Email' width='120'></e-column>
+                <e-column field='phoneText' headerText='Phone' width='130'></e-column>
+                <e-column field='remarks' headerText='Remarks' width='150'></e-column>
+                <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="addForm">
+                    <div class="d-flex flex-wrap align-items-center">
+
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': manpowerId.invalid && (manpowerId.dirty || manpowerId.touched || submitClicked)}">
+                            <div>
+                                <label for="manpowerId">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-autocomplete id='atcelement' formControlName="manpowerId"
+                                    (change)="onChangeEmployee($event)" [dataSource]='employees'>
+                                    <ng-template #itemTemplate="" let-data="">
+                                        <span><span class='name'> {{data.employeeCode}}</span><span class="fs-sm"> -
+                                                {{data.name}}</span></span>
+                                    </ng-template>
+                                </ejs-autocomplete>
+                                <div *ngIf="manpowerId.invalid && (manpowerId.dirty || manpowerId.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="manpowerId.errors.duplicate">
+                                        Code already exists.
+                                    </div>
+                                    <div *ngIf="manpowerId.errors.required">
+                                        Code is required.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div id="OrderIDError" *ngIf='OrderID.invalid && (OrderID.dirty || OrderID.touched)'>
+                                <label class="e-error" id="OrderID-info" style="display: block;">*Order ID is
+                                    required</label>
+                            </div> -->
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="manpowerName">Name</label>
+
+                            </div>
+                            <div>
+                                <input class="e-input" formControlName="manpowerName" id="manpowerName"
+                                    name="manpowerName" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-input-line col-6"
+                            [ngClass]="{'e-error': manpowerCategoryId.invalid && (manpowerCategoryId.dirty || manpowerCategoryId.touched || submitClicked)}">
+                            <div>
+                                <label for="manpowerCategoryId">Category</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist formControlName="manpowerCategoryId" id='manpowerCategoryId'
+                                    [dataSource]='manPowerCategories' [fields]='fields' placeholder="Select Category">
+                                </ejs-dropdownlist>
+                                <div *ngIf="manpowerCategoryId.invalid && (manpowerCategoryId.dirty || manpowerCategoryId.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="manpowerCategoryId.errors.required">
+                                        Category is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="email">Email</label>
+                            </div>
+                            <div>
+                                <input class="e-input" formControlName="email" id="email" name="email" type="text">
+                            </div>
+
+                        </div>
+                        <div class="form-group form-input-line col-6">
+                            <div>
+                                <label for="phone">Phone</label>
+
+                            </div>
+                            <div>
+                                <ejs-maskedtextbox mask='\\+000-0000000' name="phone" formControlName="phone">
+                                </ejs-maskedtextbox>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-12 "
+                            [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                            <div>
+                                <label for="remarks">Remarks</label>
+                            </div>
+                            <div>
+                                <textarea type="text" class=" e-input" name="remarks"
+                                    formControlName="remarks"></textarea>
+                                <div *ngIf="remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="remarks.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Own Manpower Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div> {{manpowerCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Manpower Name : </div>
+                <div> {{manpowerName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Manpower Category : </div>
+                <div> {{manpowerCategory}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Email:</div>
+                <div> {{email}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div> Phone Number :</div>
+                <div>{{phone}} </div>
+            </div>
+
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{remark}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

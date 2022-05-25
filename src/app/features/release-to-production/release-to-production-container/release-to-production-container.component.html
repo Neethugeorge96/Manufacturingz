@@ -1,0 +1,48 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+    Edit Release To Production
+  </h1>
+  <button [routerLink]="['../../']" routerLinkActive="router-link-active" class="btn btn-outline-primary btn-sm">
+    Back to RP List
+    <i class="fal fa-arrow-left ml-1"></i>
+  </button>
+</div>
+<div class="card p-3">
+  <div class="d-flex flex-wrap justify-content-around my-4">
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+      <div class="card border-primary shadow cursor-pointer" style="height: 140px;" (click)="materialIssue()">
+        <div class="p-6 text-center">
+          <div class="h4">Material Issue</div>
+        </div>
+        <div class="position-absolute" style="right: 5px;bottom: 5px;"><i class="fal fa-circle"></i></div>
+        <!-- <div class="position-absolute" style="right: 5px;bottom: 5px;"><i
+            class="fa-check-circle color-white bg-success-600 border-circle fs-lg"></i>
+        </div> -->
+
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+      <div class="card border-primary shadow cursor-pointer" style="height: 140px;" [routerLink]="['routing-time']" routerLinkActive="router-link-active" >
+        <div class="p-6 text-center">
+          <div class="h4">Routing Time Tracker</div>
+        </div>
+        <div class="position-absolute" style="right: 5px;bottom: 5px;"><i class="fal fa-circle"></i></div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+      <div class="card border-primary shadow cursor-pointer" style="height: 140px;" (click)="timeSheet()">
+        <div class="p-6 text-center">
+          <div class="h4">Time Sheet Updation</div>
+        </div>
+        <div class="position-absolute" style="right: 5px;bottom: 5px;"><i class="fal fa-circle"></i></div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+      <div class="card border-primary shadow cursor-pointer" style="height: 140px;" (click)="production()">
+        <div class="p-6 text-center">
+          <div class="h4">Production Closing</div>
+        </div>
+        <div class="position-absolute" style="right: 5px;bottom: 5px;"><i class="fal fa-circle"></i></div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,28 @@
+<div class="subheader">
+  <h1 class="subheader-title">
+    Material Issue
+  </h1>
+</div>
+<div id="materialissue" class="card p-3">
+  <ejs-tab id="element" [animation]="animation">
+    <e-tabitems>
+      <e-tabitem>
+        <ng-template #headerText>
+          <div> Material Issue Request</div>
+        </ng-template>
+        <ng-template #content>
+          <app-material-issue-list></app-material-issue-list>
+        </ng-template>
+      </e-tabitem>
+      <e-tabitem>
+        <ng-template #headerText>
+          <div> Material Issue Approve</div>
+        </ng-template>
+        <ng-template #content>
+          <app-material-request-approve-list></app-material-request-approve-list>
+        </ng-template>
+      </e-tabitem>
+    </e-tabitems>
+  </ejs-tab>
+
+</div>

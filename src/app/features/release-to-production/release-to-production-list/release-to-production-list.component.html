@@ -1,0 +1,40 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Release To Production List
+    </h1>
+</div>
+<div class="card p-3">
+    <ejs-grid #grid [dataSource]='productionOrder' [toolbar]='toolbar' (commandClick)='commandClick($event)'
+        gridLines='Both' [editSettings]='editSettings' (queryCellInfo)='queryCellInfo($event)' (actionBegin)='actionBegin($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='30'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='productionOrderNumber' headerText='PO Number' isPrimaryKey='true' width='80'></e-column>
+            <e-column field='productionOrderDate' type="date" [format]='dateFormat' headerText='PO Date' width='100'>
+            </e-column>
+            <e-column field='uom' headerText='Production UOM' width='100'></e-column>
+            <e-column field='productionQuantity' headerText='Production Qty' width='80'></e-column>
+            <e-column field='batchSize' headerText='Batch Size' width='80'></e-column>
+            <e-column headerText='Status' width="80">
+                <ng-template #template let-d>
+                    <div>
+                        <span class="e-badge e-badge-draft"
+                            *ngIf="d.status === productionOrderStatus['Planned']">Planned</span>
+                        <span class="e-badge e-badge-approved"
+                            *ngIf="d.status === productionOrderStatus['Releasedtoproduction']">Released to
+                            Production</span>
+                            <span class="e-badge e-badge-draft"
+                            *ngIf="d.status === productionOrderStatus['Workinprogress']">Work in Progress</span>
+                            
+                            <span class="e-badge e-badge-rejected"
+                            *ngIf="d.status === productionOrderStatus['Completed']">Completed </span>
+                    </div>
+                </ng-template>
+            </e-column>
+            <e-column headerText='Actions' width='50' [commands]='commands'></e-column>
+        </e-columns>
+    </ejs-grid>
+</div>

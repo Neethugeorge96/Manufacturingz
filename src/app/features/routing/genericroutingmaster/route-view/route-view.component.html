@@ -1,0 +1,181 @@
+
+<div>
+    <div class="bg-gray-200 h5 pl-2 py-1 m-0">
+        Operations
+    </div>
+    <ejs-grid [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar' (commandClick)='commandClick($event)'
+        (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)' gridLines='Both'>
+        <e-columns>
+            <e-column headerText='S.No.' [allowEditing]="false" >
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='operationName' headerText='Name' ></e-column>
+            <e-column field='operationNumber' headerText='Number' isPrimaryKey='true' width=120  ></e-column>
+            <e-column field='workCenterId' [valueAccessor]='getName' headerText='Workcenter'  ></e-column>
+            <e-column field='isSubcontracted' [displayAsCheckBox]="true" headerText='subcontracted' ></e-column>
+            <e-column headerText='Actions'  [commands]='commands'></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="operationForm">
+                <div class="d-flex flex-wrap align-items-center">
+
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="operationNo">Number</label>
+                            <sup class="text-danger">*</sup>
+                        </div> 
+                        <div>
+                            <ejs-numerictextbox format="n" [showSpinButton]="false" formControlName="operationNumber" ></ejs-numerictextbox>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': operationName.invalid && (operationName.dirty || operationName.touched || submitClicked)}" >
+                        <div>
+                            <label for="operationName">Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input" formControlName="operationName" id="operationName" name="operationName" type="text">
+                            <div *ngIf="operationName.invalid && (operationName.dirty || operationName.touched || submitClicked)"  class="e-error d-block">
+                                <div *ngIf="operationName.errors.required">
+                                    Name is required.
+                                </div>
+                                <div *ngIf="operationName.errors.maxlength">
+                                    Name cannot be more than 32 characters.
+                                </div>
+                                <div *ngIf="operationName.errors.duplicate">
+                                    Name already exists.
+                                </div>
+
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': workCenterId.invalid && (workCenterId.dirty || workCenterId.touched || submitClicked)}">
+                        <div>
+                            <label for="workCenterId">Work Center</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist formControlName="workCenterId" id='workCenterId'
+                                [dataSource]='workCenters' [fields]='fields' placeholder="Select work center">
+                            </ejs-dropdownlist>
+                            <div *ngIf="workCenterId.invalid && (workCenterId.dirty || workCenterId.touched || submitClicked)"  class="e-error d-block">
+                                <div *ngIf="workCenterId.errors.required">
+                                    Work Center is required.
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="isSubcontracted">Sub contracted</label>
+                        </div>
+                        <div>
+                            <span class="align-top mr-2">No</span>
+                            <ejs-switch cssClass="handle-text" formControlName="isSubcontracted" [checked]="true"></ejs-switch>
+                            <span class="align-top ml-2">Yes</span>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="isOutputRequired">Output required</label>
+                        </div>
+                        <div>
+                            <span class="align-top mr-2">No</span>
+                            <ejs-switch cssClass="handle-text" formControlName="isOutputRequired" [checked]="true"></ejs-switch>
+                            <span class="align-top ml-2">Yes</span>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="batchControl">Batch Control</label>
+                        </div>
+                        <div>
+                            <span class="align-top mr-2">No</span>
+                            <ejs-switch cssClass="handle-text" formControlName="batchControl" [checked]="true"></ejs-switch>
+                            <span class="align-top ml-2">Yes</span>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="backflushMaterial">Back flush material</label>
+                        </div>
+                        <div>
+                            <span class="align-top mr-2">No</span>
+                            <ejs-switch cssClass="handle-text" formControlName="backflushMaterial" [checked]="true"></ejs-switch>
+                            <span class="align-top ml-2">Yes</span>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="isQCOperationRequired">Quality Check Operation</label>
+                        </div>
+                        <div>
+                            <span class="align-top mr-2">No</span>
+                            <ejs-switch cssClass="handle-text" formControlName="qualityControlRequired" [checked]="true"></ejs-switch>
+                            <span class="align-top ml-2">Yes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+    </ejs-grid>
+    <ng-template #content let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">
+                Operation Details
+            </h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">
+                    ×
+                </span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex flex-wrap">
+                <div class=" view-item  col-12">
+                    <div> Number :</div>
+                    <div> {{operationForView?.operationNumber}} </div>
+                </div>
+                <div class="view-item col-12">
+                    <div> Name : </div>
+                    <div> {{operationForView?.operationName}} </div>
+                </div>
+                <div class="view-item col-12">
+                    <div>Work Center : </div>
+                    <div> {{operationForView?.workcenter}}</div>
+                </div>
+    
+                <div class="view-item col-12">
+                    <div>Is Subcontracted : </div>
+                    <div>{{operationForView?.isSubcontracted?'Yes':'No'}} </div>
+                </div>
+                <div class="view-item col-12">
+                    <div>Output required : </div>
+                    <div>{{operationForView?.isOutputRequired?'Yes':'No'}} </div>
+                </div>
+                <div class="view-item col-12">
+                    <div>Batch Control : </div>
+                    <div>{{operationForView?.batchControl?'Yes':'No'}} </div>
+                </div>
+                <div class="view-item col-12">
+                    <div>Backflush Material : </div>
+                    <div>{{operationForView?.backflushMaterial?'Yes':'No'}} </div>
+                </div>
+                <div class="view-item col-12">
+                    <div>Quality Check Operation : </div>
+                    <div>{{operationForView?.qualityControlRequired?'Yes':'No'}} </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+                Cancel
+            </button>
+        </div>
+    </ng-template>
+
+</div>

@@ -1,0 +1,133 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Production Line Details
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='productionLine' [editSettings]='editSettings' [toolbar]='toolbar'
+            (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)' (queryCellInfo)='queryCellInfo($event)' gridLines='Both'
+            (commandClick)='commandClick($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='30'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div> 
+                    </ng-template>
+                </e-column>
+                <e-column field='productionLineCode' headerText='Code' isPrimaryKey='true' width='50'></e-column>
+                <e-column field='productionLineName' headerText='Name' width='120'></e-column>
+                <e-column field='plantName' headerText='Plant' width='60'></e-column>
+                <e-column field='remarks' headerText='Remarks' width='120'></e-column>
+                <e-column headerText='Actions' width='80' [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="orderForm">
+                    <div class="d-flex flex-wrap">
+                        <div class="form-group form-input-line col-6" >
+                            <div>
+                                <label for="productionLineCode">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class=" e-input" formControlName="productionLineCode">
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': productionLineName.invalid && (productionLineName.dirty || productionLineName.touched || submitClicked)}">
+                            <div>
+                                <label for="productionlineName">Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class=" e-input" formControlName="productionLineName">
+                                <div *ngIf="productionLineName.invalid && (productionLineName.dirty || productionLineName.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="productionLineName.errors.duplicate">
+                                        Name already exists.
+                                    </div>
+                                    <div *ngIf="productionLineName.errors.required">
+                                        Name is required.
+                                    </div>
+                                    <div *ngIf="productionLineName.errors.maxlength">
+                                        Name cannot be more than 32 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': plantId.invalid && (plantId.dirty || plantId.touched || submitClicked)}">
+                            <div>
+                                <label for="plantId">Plant</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist id='plantId' [fields]="{text: 'plantName', value: 'id' }"
+                                    placeholder="Search plant" [allowFiltering]='true' (filtering)='onFilteringRes($event)' formControlName="plantId"
+                                    [dataSource]='plants' [itemTemplate]="ItemTemplate" [valueTemplate]="ItemTemplate">
+                                    <ng-template #ItemTemplate let-data>
+                                        <span>{{data.plantCode}}</span> - 
+                                        <span class="fs-sm"> {{data.plantName}}</span>
+                                    </ng-template>
+                                </ejs-dropdownlist>
+                                <div *ngIf="plantId.invalid && (plantId.dirty || plantId.touched || submitClicked)" class="e-error d-block">
+                                     <div *ngIf="plantId.errors.required">
+                                        Plant is required.
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-12"  [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                            <div>
+                                <label for="remarks">Remarks</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <textarea type="text" class="e-input" formControlName="remarks"></textarea>
+                                <div *ngIf="remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)" class="e-error d-block">
+                                    <div *ngIf="remarks.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Production Line Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div> {{productionLineCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Plant Name : </div>
+                <div> {{plantName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Name : </div>
+                <div> {{productionLineNameview}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{Remarks}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

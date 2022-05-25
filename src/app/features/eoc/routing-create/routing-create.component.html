@@ -1,0 +1,126 @@
+<div [formGroup]="eocOrderForm" class="mt-6">
+    <div class="d-flex flex-wrap col-md-8">
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label for="productionLineCode"
+                    [ngClass]="{'e-error': productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)}">
+                    Production Line</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-dropdownlist id='productionLine'
+                    [fields]="{text: 'productionLineName', value: 'productionLineCode' }"
+                    placeholder="Search production line" (change)="getProductionLineName($event)"
+                    formControlName="productionLineCode" [dataSource]='productionLines'>
+                    <ng-template #itemTemplate="" let-data="">
+                        <span>
+                            <span class='productionLine'>{{data.productionLineCode}} -
+                                {{data.productionLineName}}</span>
+                        </span>
+                    </ng-template>
+                </ejs-dropdownlist>
+                <div *ngIf="productionLineCode.invalid && (productionLineCode.dirty || productionLineCode.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionLineCode.errors.required">
+                        Production Line is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label for="manufacturedProductCode"
+                    [ngClass]="{'e-error': manufacturedProductCode.invalid && (manufacturedProductCode.dirty || manufacturedProductCode.touched || submitClicked)}">
+                    Manufactured Product</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <div>
+                    <ejs-dropdownlist formControlName="manufacturedProductCode" [dataSource]='manufacturingProduct'
+                        placeholder="Search Product"
+                        [fields]="{text: 'manufacturedProduct', value: 'manufacturedProductCode' }"
+                        (change)="getRoutingCodebyProduct($event)">
+                        <ng-template #itemTemplate="" let-data="">
+                            <span>
+                                <span>{{data.manufacturedProduct}}
+                                    <span class="float-right fs-sm">
+                                        {{data.manufacturedProductCode}}</span></span>
+                            </span>
+                        </ng-template>
+                    </ejs-dropdownlist>
+                    <div *ngIf="manufacturedProductCode.invalid && (manufacturedProductCode.dirty || manufacturedProductCode.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="manufacturedProductCode.errors.required">
+                            Manufactured Product is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label for="routingCode">Routing Code</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <input type="text"
+                    value="{{eocOrderForm.controls.routingCode.value}} - {{eocOrderForm.controls.routingName.value}}"
+                    disabled class="e-input">
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label for="routingCostingBasis"
+                    [ngClass]="{'e-error': routingCosting.invalid && (routingCosting.dirty || routingCosting.touched || submitClicked)}">
+                    Routing Costing Basis</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-dropdownlist name="routingCostingBasis" formControlName="routingCostingBasis" popupHeight='120px'
+                    [fields]="{text: 'text', value: 'value' }" placeholder="Select Routing Basic"
+                    [dataSource]='routingCostingBasis'>
+                </ejs-dropdownlist>
+                <div *ngIf="routingCosting.invalid && (routingCosting.dirty || routingCosting.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="routingCosting.errors.required">
+                        Routing Costing is required.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-input-line col-6">
+            <div>
+                <label
+                    [ngClass]="{'e-error': productionUOM.invalid && (productionUOM.dirty || productionUOM.touched || submitClicked)
+                                        || productionQuantity.invalid && (productionQuantity.dirty || productionQuantity.touched || submitClicked)}">
+                    Production UOM and Quantity</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div class="col-12 d-flex">
+                <ejs-dropdownlist formControlName="productionUOM" [dataSource]='uom' placeholder="UOM"
+                    [fields]="{text: 'uomName', value: 'id' }"></ejs-dropdownlist>
+                <div *ngIf="productionUOM.invalid && (productionUOM.dirty || productionUOM.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionUOM.errors.required">
+                        Production UOM is required.
+                    </div>
+                </div>
+                <input type="number" formControlName="productionQuantity" class="e-input">
+                <div *ngIf="productionQuantity.invalid && (productionQuantity.dirty || productionQuantity.touched || submitClicked)"
+                    class="e-error d-block">
+                    <div *ngIf="productionQuantity.errors.required">
+                        Production Quantity is required.
+                    </div>
+                    <div *ngIf="productionQuantity.errors.max">
+                        Production Quantity cannot be more than 6 characters.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col  d-flex justify-content-end mb-2">
+        <button ejs-button routerLink='/eoc/eoc-list' cssClass="e-outline">Cancel</button>
+        <button type="submit" (click)="submit()" ejs-button cssClass="e-outline ml-3" [isPrimary]="true"
+            [disabled]="eocOrderForm.invalid">Next </button>
+    </div>
+</div>

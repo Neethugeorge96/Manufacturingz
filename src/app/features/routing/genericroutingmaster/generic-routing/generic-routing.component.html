@@ -1,0 +1,73 @@
+<div class="subheader ">
+    <h1 class="subheader-title ">
+       Generic Routing 
+    </h1>
+</div>
+<div class="card p-3">
+    <ejs-grid [dataSource]='routingList' [editSettings]='editSettings' [toolbar]='toolbarOptions'
+        (actionBegin)='actionBegin($event)' (commandClick)='commandClick($event)' gridLines='Both'>
+        <e-columns>
+            <e-column headerText='S.No.' width='30'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column> 
+            <e-column field='routingCode' headerText='Code' width='120'></e-column>
+            <e-column field='routingName' headerText='Name' width='120'> </e-column>
+
+            <e-column field='routingType' [valueAccessor]='getRouteTypeName' headerText='Type' width='120'></e-column>
+            <e-column headerText='Status' width='70' textAlign='Center'>
+                <ng-template #template let-d>
+                    <div>
+                        <span class="e-badge e-badge-draft" *ngIf="!d.isCompleted">Draft</span>
+                        <span class="e-badge e-badge-approved" *ngIf="d.isCompleted">Completed</span>
+                    </div>
+                </ng-template>
+            </e-column>
+            <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+        </e-columns>
+    </ejs-grid>
+</div> 
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Generic Routing Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div>{{routingCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Name : </div>
+                <div> {{routingName}} </div>
+            </div> 
+            <div class="view-item col-12">
+                <div>Type : </div>
+                <div>{{routingType}} </div>
+            </div>
+            <div *ngIf="edited" class="view-item col-12">
+                <div>ManinRoute : </div>
+                <div> {{mainRoute}}</div>
+            </div>
+            
+            <div class="view-item col-12">
+                <div>Production Line : </div>
+                <div> {{productionLineName}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

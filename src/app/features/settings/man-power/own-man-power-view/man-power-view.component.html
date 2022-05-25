@@ -1,0 +1,51 @@
+<div class="modal-header">
+    <h4 class="modal-title">View Manpower</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="d-flex double-column flex-wrap">
+        
+        <div class="form-group form-input-line col-6  ">
+            <label class="col-form-label" for="manpowerId">Code <sup class="text-danger">*</sup></label>
+            <input readonly type="text" class="form-control" value="{{manPower.manpowerId}}" >
+        </div>
+        <div class="form-group form-input-line col-6  ">
+            <label class="col-form-label" for="ManpowerCategoryId">Category<sup class="text-danger">*</sup></label>
+            <select readonly class="form-control" value="{{manPower.manpowerCategoryId}}" >
+                <option [ngValue]="null" disabled>Select category</option>
+                <option *ngFor="let key of manPowerCategories" [ngValue]='key.id'>{{key.categoryName}}</option>
+
+            </select>
+        </div>
+        <div class="form-group form-input-line col-6  ">
+            <label class="col-form-label" for="manpowerType">Type <sup class="text-danger">*</sup></label>
+            <select readonly class="form-control" value="{{manPower.manpowerType}}">
+                <option [ngValue]="null" disabled>Select Type</option>
+                <option [ngValue]="1">Owned</option>
+                <option [ngValue]="2">Hired</option>
+                <!-- <option *ngFor="let key of genderTypeKeys" [ngValue]='key'>{{genderType[key]}}</option> -->
+
+            </select>
+        </div>
+
+        <div class="form-group form-input-line col-6  ">
+            <label class="col-form-label" for="manpowerName">Name <sup class="text-danger">*</sup></label>
+            <input readonly type="text" class="form-control" value="{{manPower.manpowerName}}">
+        </div>
+        <div class="form-group form-input-line col-6  ">
+            <label class="col-form-label" for="email">Email Id</label>
+            <input readonly type="email" class="form-control" value="{{manPower.email}}" >
+        </div>
+        <div class="form-group form-input-line col-6  ">
+            <label class="col-form-label" for="phone">Phone Number<sup class="text-danger">*</sup></label>
+            <input readonly type="text" class="form-control" value="{{manPower.phone}}" >
+        </div>
+        <div class="form-group form-input-line col-12  ">
+            <label class="col-form-label" for="remarks">Description<sup class="text-danger">*</sup></label>
+            <textarea readonly type="text" class="form-control" value="{{manPower.remarks}}"></textarea>
+        </div>
+    </div>
+
+</div>

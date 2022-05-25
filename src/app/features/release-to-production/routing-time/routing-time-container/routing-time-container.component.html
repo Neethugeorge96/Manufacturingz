@@ -1,0 +1,39 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Routing Time Tracker
+    </h1>
+    <button [routerLink]="['/release-to-production/release-production-list/edit/'+poId]"  class="btn btn-outline-primary btn-sm">
+        Back to RP
+        <i class="fal fa-arrow-left ml-1"></i>
+    </button>
+</div>
+<div class="card p-3">
+    <div *ngIf="batches.length"  class="d-flex flex-wrap mt-3">
+        <div class="col-4 border shadow-inset-3 p-3">
+            <div id='treeparent'>
+                <ejs-treeview id='treeelement' (nodeSelecting)="onNodeSelecting($event)" [fields]='field'>
+                </ejs-treeview>
+            </div>
+        </div>
+        <div class="col-8 border shadow-inset-3">
+            <div [ngSwitch]="type" class="p-3">
+                <div *ngSwitchCase="'BA'">
+                    <app-batch-view  [batchTrackerId]="nodeId" [pODetails]="pODetails" (statusChange)="statusChanged($event)"></app-batch-view>
+                </div>
+                <div *ngSwitchCase="'RO'">
+                    <app-route-view ></app-route-view>
+                </div>
+                <div *ngSwitchCase="'OP'">
+                    <app-operation-view [operationTrackerId]="nodeId" >
+                    </app-operation-view>
+                </div>
+                <div *ngSwitchCase="'TA'">
+                    <app-task-view  [taskTrackerId]="nodeId" ></app-task-view>
+                </div>
+                <div *ngSwitchDefault>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

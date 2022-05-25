@@ -1,0 +1,55 @@
+<form id="ManPowerEdit" [formGroup]="editForm" (validSubmit)="onSubmit()">
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Manpower</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex double-column flex-wrap">
+            
+            <div class="form-group form-input-line col-6  ">
+                <label class="col-form-label" for="manpowerId">Code <sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" formControlName="manpowerId">
+            </div>
+            <div class="form-group form-input-line col-6  ">
+                <label class="col-form-label" for="ManpowerCategoryId">Category<sup class="text-danger">*</sup></label>
+                <select class="form-control" formControlName="manpowerCategoryId">
+                    <option [ngValue]="null" disabled>Select category</option>
+                    <option *ngFor="let key of manPowerCategories" [ngValue]='key.id'>{{key.categoryName}}</option>
+
+                </select>
+            </div>
+            <div class="form-group form-input-line col-6  ">
+                <label class="col-form-label" for="manpowerType">Type <sup class="text-danger">*</sup></label>
+                <select class="form-control" formControlName="manpowerType">
+                    <option [ngValue]="null" disabled>Select Type</option>
+                    <option *ngFor="let key of manPowerCategories" [ngValue]='key.id'>{{key.categoryName}}</option>
+                </select>
+            </div>
+
+            <div class="form-group form-input-line col-6  ">
+                <label class="col-form-label" for="manpowerName">Name <sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" formControlName="manpowerName">
+            </div>
+            <div class="form-group form-input-line col-6  ">
+                <label class="col-form-label" for="email">Email Id</label>
+                <input type="email" class="form-control" formControlName="email">
+            </div>
+            <div class="form-group form-input-line col-6  ">
+                <label class="col-form-label" for="phone">Phone Number <sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" formControlName="phone">
+            </div>
+            <div class="form-group form-input-line col-12  ">
+                <label class="col-form-label" for="remarks">Remarks<sup class="text-danger">*</sup></label>
+                <textarea type="text" class="form-control" formControlName="remarks"></textarea>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="activeModal.close('Close click')"><i
+                class="mr-1 fal fa-window-close"></i> Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="mr-1 fal fa-save"></i>Save</button>
+    </div>
+</form>

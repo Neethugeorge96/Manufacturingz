@@ -1,0 +1,87 @@
+<div>
+    <div class="bg-gray-200 h5 pl-2 py-1 m-0">
+        Machines
+    </div>
+    <ejs-grid [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar'
+        (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)' gridLines='Both'>
+        <e-columns>
+            <e-column headerText='S.No.' width='30' [allowEditing]="false">
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='machineName' headerText='Name' isPrimaryKey='true'></e-column>
+            <e-column field='machineCode' headerText='Code'></e-column>
+            <e-column field='costRatePerHour' headerText='Cost Rate/Hr'></e-column>
+            <e-column field='currencyCode' headerText='Currency'></e-column>
+            <e-column headerText='Actions' [commands]='commands'></e-column>
+        </e-columns>
+        <e-aggregates>
+            <e-aggregate>
+                <e-columns>
+                    <e-column type="sum" field="costRatePerHour">
+                        <ng-template #footerTemplate let-data>
+                            <span>
+                                <span class="fs-b">Total:</span>
+                                <span class="float-right font-weight-bold">{{data.sum}}</span>
+                            </span>
+                        </ng-template>
+                    </e-column>
+                </e-columns>
+            </e-aggregate>
+        </e-aggregates>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="machineForm">
+                <div class="d-flex flex-wrap align-items-center">
+
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': (machineCode.invalid && (machineCode.dirty || machineCode.touched))}">
+                        <div>
+                            <label for="machineId">Machine</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-autocomplete id='atcelement' formControlName="machineCode" [dataSource]='machines' 
+                            (change)="checkDuplication($event)">
+                                <ng-template #itemTemplate="" let-data="">
+                                    <div>
+                                        <div class='name'> {{data.machineName}}</div>
+                                        <div class="fs-sm text-right"> {{data.machineId}}</div>
+                                    </div>
+                                </ng-template>
+                            </ejs-autocomplete>
+                            <div *ngIf="(machineCode.invalid && (machineCode.dirty || machineCode.touched))||(machineCode.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="machineCode.errors.required">
+                                        Machine is required.
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="costRatePerHour">Cost Rate/Hr</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input" formControlName="costRatePerHour" id="costRatePerHour"
+                                name="costRatePerHour" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="currencyCode">Currency</label>
+                            <!-- <sup class="text-danger">*</sup> -->
+                        </div>
+                        <div>
+                            <input class="e-input" formControlName="currencyCode" id="currencyCode" name="currencyCode"
+                                type="text">
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </ng-template>
+
+    </ejs-grid>
+</div>

@@ -1,0 +1,231 @@
+<div>
+    <ejs-grid [dataSource]='timeSheet' [editSettings]='editSettings' [toolbar]='toolbar' [allowExcelExport]='true'
+        (actionBegin)='actionBegin($event)' gridLines='Both' #grid (toolbarClick)='toolbarClick($event)'
+        (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+        <e-columns>
+            <e-column headerText='S.No.' width='30'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='manpowerCategory' headerText='Employee Category' width='120'></e-column>
+            <e-column field='employeeName' headerText='Employee Name' width='120'></e-column>
+            <e-column field='shiftName' headerText='Shift' isPrimaryKey='true' width='120'></e-column>
+            <e-column field='batchNumber' headerText='Batch' width='60'></e-column>
+            <e-column field='operationName' headerText='Operation' width='100'></e-column>
+            <e-column field='inTime' headerText='Time In' type="dateTime" format="yyyy/MM/dd hh:mm a" width='150'>
+            </e-column>
+            <e-column field='outTime' headerText='Time Out' type="dateTime" format="yyyy/MM/dd hh:mm a" width='150'>
+            </e-column>
+            <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="orderForm">
+                <div class="d-flex flex-wrap">
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': manpowerCategoryName.invalid && (manpowerCategoryName.dirty || manpowerCategoryName.touched || submitClicked)}">
+                        <div>
+                            <label for="manpowerCategoryId">
+                                Employee Category</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="manpowerCategoryId" [allowFiltering]='true'
+                                formControlName="manpowerCategoryId" popupHeight='120px'
+                                [fields]="{text: 'categoryName', value: 'id' }" (change)="getCategoryName($event)"
+                                placeholder="Select Employee Category" [dataSource]='manPowerCategory'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="manpowerCategoryName.invalid && (manpowerCategoryName.dirty || manpowerCategoryName.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="manpowerCategoryName.errors.required">
+                                    Employee Category is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': employeeName.invalid && (employeeName.dirty || employeeName.touched || submitClicked)}">
+                        <div>
+                            <label for="employeeId">
+                                Employee Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="employeeId" formControlName="employeeId"
+                                (change)="getEmployeeShift($event)" popupHeight='120px'
+                                [fields]="{text: 'manpowerName', value: 'manpowerId' }" placeholder="Select Employee"
+                                [dataSource]='employeeNameFilterList'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="employeeName.invalid && (employeeName.dirty || employeeName.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="employeeName.errors.required">
+                                    Employee Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': shiftId.invalid && (shiftId.dirty || shiftId.touched || submitClicked)}">
+                        <div>
+                            <label for="shiftId">
+                                Shift</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="shiftId" formControlName="shiftId" (change)="getShiftName($event)"
+                                popupHeight='120px' [fields]="{text: 'shiftName', value: 'shiftId' }"
+                                placeholder="Select Shift" [dataSource]='employeeShiftFilterList'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="shiftId.invalid && (shiftId.dirty || shiftId.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="shiftId.errors.required">
+                                    Shift is required.
+                                </div>
+                                <div *ngIf="shiftId.errors.maxlength">
+                                    Shift cannot be more than 4 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': batchNumber.invalid && (batchNumber.dirty || batchNumber.touched || submitClicked)}">
+                        <div>
+                            <label for="batchNumber">
+                                Batch</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="batchNumber" formControlName="batchNumber"
+                                (change)="getOperationRoutes($event)" popupHeight='120px'
+                                [fields]="{text: 'text', value: 'value' }" placeholder="Select Batch"
+                                [dataSource]='batch'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="batchNumber.invalid && (batchNumber.dirty || batchNumber.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="batchNumber.errors.required">
+                                    Batch is required.
+                                </div>
+                                <div *ngIf="batchNumber.errors.maxlength">
+                                    Batch cannot be more than 4 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': operationId.invalid && (operationId.dirty || operationId.touched || submitClicked)}">
+                        <div>
+                            <label for="operationId">
+                                Operation</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist name="operationId" formControlName="operationId"
+                                (change)="getOperationName($event)" popupHeight='120px'
+                                [fields]="{text: 'operationName', value: 'id' }" placeholder="Select Operation"
+                                [dataSource]='operation'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="operationId.invalid && (operationId.dirty || operationId.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="operationId.errors.required">
+                                    Operation is required.
+                                </div>
+                                <div *ngIf="operationId.errors.maxlength">
+                                    Operation cannot be more than 32 characters.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': enterInTime.invalid && (enterInTime.dirty || enterInTime.touched || submitClicked)}">
+                        <div>
+                            <label for="inTime">
+                                In Time</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-datetimepicker id="inTime" formControlName="inTime" #inTime
+                                placeholder='Select a in time'></ejs-datetimepicker>
+                            <div *ngIf="enterInTime.invalid && (enterInTime.dirty || enterInTime.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="enterInTime.errors.required">
+                                    In Time is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"
+                        [ngClass]="{'e-error': enterOutTime.invalid && (enterOutTime.dirty || enterOutTime.touched || submitClicked)}">
+                        <div>
+                            <label for="outTime">
+                                Out Time</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-datetimepicker id="outTime" formControlName="outTime" #outTime
+                                placeholder='Select a out time'></ejs-datetimepicker>
+                            <div *ngIf="enterOutTime.invalid && (enterOutTime.dirty || enterOutTime.touched || submitClicked)"
+                                class="e-error d-block">
+                                <div *ngIf="enterOutTime.errors.required">
+                                    Out Time is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ejs-grid>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Time Sheet Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Manpower Category : </div>
+                <div> {{manpowerCategory}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Employee Name : </div>
+                <div> {{employeeNameView}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Shift Name : </div>
+                <div> {{shiftName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Batch : </div>
+                <div> {{batchNumber}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Operation Name :</div>
+                <div> {{operationName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Task Name :</div>
+                <div> {{taskName}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Time In : </div>
+                <div>{{inTime | date: 'h:mm a'}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Time Out : </div>
+                <div>{{outTime | date: 'h:mm a'}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

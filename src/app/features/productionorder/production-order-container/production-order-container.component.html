@@ -1,0 +1,41 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+     {{productionorderHeader}}
+    </h1>
+    <button [routerLink]="['../']" routerLinkActive="router-link-active" class="btn btn-outline-primary btn-sm">
+      Back to PO
+      <i class="fal fa-arrow-left ml-1"></i>
+  </button>
+  </div>
+  <div id="ManPowerList" class="card p-3">
+    <ejs-tab #tab id="tab_wizard" showCloseButton=false [animation]="animation" >
+      <e-tabitems>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Basic Details </div>
+          </ng-template>
+          <ng-template #content>
+            <app-production-order-create [productionOrder]="productionOrder" (completed)="selectTab($event)" (select)="tabSelected($event)"></app-production-order-create>
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Routing </div>
+          </ng-template>
+          <ng-template #content>
+            <app-po-routing-edit [productionOrder]="productionOrder" (completed)="selectTab($event)"></app-po-routing-edit>
+          </ng-template>
+        </e-tabitem>
+
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> BOM </div>
+          </ng-template>
+          <ng-template #content>
+            <app-po-bom-edit [productionOrder]="productionOrder" (completed)="selectTab($event)"></app-po-bom-edit>
+          </ng-template>
+        </e-tabitem>
+      </e-tabitems>
+    </ejs-tab>
+    
+  </div>

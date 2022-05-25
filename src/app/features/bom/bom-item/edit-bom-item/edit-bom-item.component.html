@@ -1,0 +1,443 @@
+<div class="subheader ">
+    <h1 class="subheader-title ">
+        Edit Bill Of Material
+    </h1>
+    <button class="btn btn-outline-primary btn-sm" routerLink="/bom/maintain-bom-list"><i
+            class="fal fa-arrow-left mr-2"></i> Back to BOM</button>
+</div>
+<div class="card p-3">
+    <form [formGroup]="bomHeaderForm">
+        <div class="d-flex flex-wrap col-md-8 mt-3">
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': manufacturedProductCode.invalid && (manufacturedProductCode.dirty || manufacturedProductCode.touched || headerSubmitClicked)}">
+                <div>
+                    <label>Product Name</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-dropdownlist [dataSource]='manufactureditems' placeholder="Search Product"
+                        (dataBound)="dataBoundProduct()" (change)="onChangeProductCode($event)"
+                        formControlName="manufacturedProductCode" [fields]="{text: 'itemName', value: 'itemCode' }"
+                        [allowFiltering]='true'>
+                    </ejs-dropdownlist>
+                    <div *ngIf="manufacturedProductCode.invalid && (manufacturedProductCode.dirty || manufacturedProductCode.touched || headerSubmitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="manufacturedProductCode.errors.required">
+                            Product Name is required.
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': productUOMCode.invalid && (productUOMCode.dirty || productUOMCode.touched || headerSubmitClicked)}">
+                <div>
+                    <label>Production Unit</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-dropdownlist [dataSource]='productUom' placeholder="Search UOM"
+                        formControlName="productUOMCode" [fields]="{text: 'uomName', value: 'uomCode' }"
+                        (change)="onChangeProductUnit($event)" min="1" max="100000" [allowFiltering]='true'
+                        (dataBound)="dataBoundUOM()">
+                    </ejs-dropdownlist>
+                    <div *ngIf="productUOMCode.invalid && (productUOMCode.dirty || productUOMCode.touched || headerSubmitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="productUOMCode.errors.required">
+                            Production UOM is required.
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-input-line col-6"
+                [ngClass]="{'e-error': bOMQuantity.invalid && (bOMQuantity.dirty || bOMQuantity.touched || headerSubmitClicked)}">
+                <div>
+                    <label>Production Quantity</label>
+                    <sup class="text-danger">*</sup>
+                </div>
+                <div>
+                    <ejs-numerictextbox class="e-input e-field" [showSpinButton]='false' formControlName="bOMQuantity">
+                    </ejs-numerictextbox>
+                    <div *ngIf="bOMQuantity.invalid && (bOMQuantity.dirty || bOMQuantity.touched || headerSubmitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="bOMQuantity.errors.required">
+                            Production Quantity is required.
+                        </div>
+                        <div *ngIf="bOMQuantity.errors.max">
+                            Production Quantity cannot be more than 6 characters.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div *ngIf="!this.bomItem.length &&  headerSubmitClicked" class="e-error d-block position-relative"
+                style="width: fit-content; top: -5px;">
+                <div *ngIf="!this.bomItem.length">
+                    Atleast one bomItem is required.
+                </div>
+            </div>
+            <ejs-grid  #Grid [dataSource]='bomItem' [toolbar]='toolbar' [editSettings]='editSettings'
+                (actionBegin)='actionBegin($event)' gridLines='Both' (headerCellInfo)='headerCellInfo($event)'
+                (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+                <e-columns>
+                    <e-column headerText='S.No.' width='50'>
+                        <ng-template #template let-d>
+                            <div>{{ +d.index+1 }}</div>
+                        </ng-template>
+                    </e-column>
+                    <e-column field='itemName' headerText='Item Name' width='100'></e-column>
+                    <e-column field='itemCode' isPrimaryKey='true' [visible]="false"></e-column>
+                    <e-column field='uomName' headerText='UOM' width='80'></e-column>
+                    <e-column field='uomCode' [visible]="false"></e-column>
+                    <e-column field='quantity' headerText='Qty' width='50'></e-column>
+                    <e-column field='movingWeightedAverageCostPerUnit' headerText='Avg Cost/Unit' width='80'></e-column>
+                    <e-column field='latestPurchaseCostPerUnit' headerText='Purchase Cost/Unit' width='80'>
+                    </e-column>
+                    <e-column field='standardCostPerUnitForCostEstimation' headerText='Standard Cost/Unit' width='80'>
+                    </e-column>
+                    <e-column field='priceVarianceProvision' headerText='Price Variance %' width='80'>
+                    </e-column>
+                    <e-column field='cpcName' headerText='CPC' width='100'></e-column>
+                    <e-column field='cpcCode' [visible]="false"></e-column>
+                    <e-column field='workcenterName' [visible]="false"></e-column>
+                    <e-column field='workcenterCode' [visible]="false"></e-column>
+                    <e-column field='manufacturedProductCode' [visible]="false"></e-column>
+                    <e-column headerText='Actions' width=70 [commands]='commands'></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div [formGroup]="bomForm">
+                        <div class="d-flex flex-wrap">
+                            <div class="form-group form-input-line col-6">
+                                <div>
+                                    <label [ngClass]="{'e-error': (itemName.invalid && (itemName.dirty || itemName.touched))}">Item Code/Name</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-dropdownlist [dataSource]='items' (change)="onChangeItem($event)"
+                                        formControlName="itemName" id="itemName" name="itemName"
+                                        placeholder="Search Item" [fields]="{text: 'itemName', value: 'itemName' }"
+                                        [allowFiltering]='true' [itemTemplate]="itemCode" [valueTemplate]="itemCode">
+                                    </ejs-dropdownlist>
+                                    <div *ngIf="(itemName.invalid && (itemName.dirty || itemName.touched))||(itemName.invalid&& submitClicked)"  class="e-error d-block">
+                                        <div *ngIf="itemName.errors.required">
+                                            Item Code is required.
+                                        </div>
+                                        <div *ngIf="itemName.errors.duplicate">
+                                            Item Code already exists.
+                                        </div>
+                                    </div>
+                                    <ng-template #itemCode let-data>
+                                        {{data.itemCode}} : {{data.itemName}}
+                                    </ng-template>
+                                    <input type="hidden" formControlName="itemCode" id="itemCode" name="itemCode">
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6">
+                                <div>
+                                    <label [ngClass]="{'e-error': (uOMName.invalid && (uOMName.dirty || uOMName.touched))}">UOM</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+
+                                <div>
+                                    <ejs-dropdownlist [dataSource]='uom' placeholder="Search Uom"
+                                        formControlName="uomName" id="uomName" name="uomName"
+                                        [fields]="{text: 'uomName', value: 'uomName' }" (change)="onChangeUOM($event)"
+                                        [allowFiltering]='true'>
+                                    </ejs-dropdownlist>
+                                    <div *ngIf="(uOMName.invalid && (uOMName.dirty || uOMName.touched))||(uOMName.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="uOMName.errors.required">
+                                            UOM is required.
+                                        </div>
+                                    </div>
+                                    <input type="hidden" formControlName="uomCode" id="uomCode" name="uomCode">
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6">
+                                <div>
+                                    <label [ngClass]="{'e-error': (quantity.invalid && (quantity.dirty || quantity.touched))}">Quantity</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-numerictextbox class="e-input e-field" formControlName="quantity" id="quantity"
+                                        name="quantity" [showSpinButton]='false'>
+                                    </ejs-numerictextbox>
+                                    <div *ngIf="(quantity.invalid && (quantity.dirty || quantity.touched))||(quantity.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="quantity.errors.required">
+                                            Quantity is required.
+                                        </div>
+                                        <div *ngIf="quantity.errors.min">
+                                            Quantity should be minimum 1.
+                                        </div>
+                                        <div *ngIf="quantity.errors.max">
+                                            Quantity cannot be more than 6 character.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label [ngClass]="{'e-error': (movingWeightedAverageCostPerUnit.invalid && (movingWeightedAverageCostPerUnit.dirty || movingWeightedAverageCostPerUnit.touched))}">Moving Weighted Average Cost/Unit</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-numerictextbox class="e-input e-field"
+                                        formControlName="movingWeightedAverageCostPerUnit"
+                                        id="movingWeightedAverageCostPerUnit" name="movingWeightedAverageCostPerUnit"
+                                        [showSpinButton]='false'>
+                                    </ejs-numerictextbox>
+                                    <div *ngIf="(movingWeightedAverageCostPerUnit.invalid && (movingWeightedAverageCostPerUnit.dirty || movingWeightedAverageCostPerUnit.touched))||(movingWeightedAverageCostPerUnit.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="movingWeightedAverageCostPerUnit.errors.required">
+                                            Moving Weighted Average is required.
+                                        </div>
+                                        <div *ngIf="movingWeightedAverageCostPerUnit.errors.min">
+                                            Moving Weighted Average should be minimum 1.
+                                        </div>
+                                        <div *ngIf="movingWeightedAverageCostPerUnit.errors.max">
+                                            Moving Weighted Average cannot be more than 6 character.
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label [ngClass]="{'e-error': (latestPurchaseCostPerUnit.invalid && (latestPurchaseCostPerUnit.dirty || latestPurchaseCostPerUnit.touched))}">Latest Purchase Cost/Unit</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-numerictextbox class="e-input e-field"
+                                        formControlName="latestPurchaseCostPerUnit" id="latestPurchaseCostPerUnit"
+                                        name="latestPurchaseCostPerUnit" [showSpinButton]='false'>
+                                    </ejs-numerictextbox>
+                                    <div *ngIf="(latestPurchaseCostPerUnit.invalid && (latestPurchaseCostPerUnit.dirty || latestPurchaseCostPerUnit.touched))||(latestPurchaseCostPerUnit.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="latestPurchaseCostPerUnit.errors.required">
+                                            Latest Purchase is required.
+                                        </div>
+                                        <div *ngIf="latestPurchaseCostPerUnit.errors.min">
+                                            Latest Purchase should be minimum 1.
+                                        </div>
+                                        <div *ngIf="latestPurchaseCostPerUnit.errors.max">
+                                            Latest Purchase cannot be more than 6 character.
+                                        </div>
+                                   </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label [ngClass]="{'e-error': (standardCostPerUnitForCostEstimation.invalid && (standardCostPerUnitForCostEstimation.dirty || standardCostPerUnitForCostEstimation.touched))}">Standard Cost/Unit For Cost Estimation</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-numerictextbox class="e-input e-field"
+                                        formControlName="standardCostPerUnitForCostEstimation"
+                                        id="standardCostPerUnitForCostEstimation"
+                                        name="standardCostPerUnitForCostEstimation" [showSpinButton]='false'>
+                                    </ejs-numerictextbox>
+                                    <div *ngIf="(standardCostPerUnitForCostEstimation.invalid && (standardCostPerUnitForCostEstimation.dirty || standardCostPerUnitForCostEstimation.touched))||(standardCostPerUnitForCostEstimation.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="standardCostPerUnitForCostEstimation.errors.required">
+                                            Standard Cost is required.
+                                        </div>
+                                        <div *ngIf="standardCostPerUnitForCostEstimation.errors.min">
+                                              Standard Cost should be minimum 1.
+                                        </div>
+                                        <div *ngIf="standardCostPerUnitForCostEstimation.errors.max">
+                                              Standard Cost cannot be more than 6 character.
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label [ngClass]="{'e-error': (priceVarianceProvision.invalid && (priceVarianceProvision.dirty || priceVarianceProvision.touched))}">Provision For Price Variance %</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-numerictextbox class="e-input e-field" formControlName="priceVarianceProvision"
+                                        id="priceVarianceProvision" name="priceVarianceProvision"
+                                        [showSpinButton]='false'>
+                                    </ejs-numerictextbox>
+                                    <div *ngIf="(priceVarianceProvision.invalid && (priceVarianceProvision.dirty || priceVarianceProvision.touched))||(priceVarianceProvision.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="priceVarianceProvision.errors.required">
+                                            Provision For Price Variance is required.
+                                        </div>
+                                        <div *ngIf="priceVarianceProvision.errors.max">
+                                            Provision For Price Variance cannot be more than 100.
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label [ngClass]="{'e-error': (cPCName.invalid && (cPCName.dirty || cPCName.touched))}">Cost Price Component</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-dropdownlist (change)="onChangeCPC($event)" [dataSource]='costPriceComponet'
+                                        formControlName="cpcName" id="cpcName" name="cpcName" placeholder="Search cpc"
+                                        [fields]="{text: 'cpcName', value: 'cpcName' }" [allowFiltering]='true'>
+                                    </ejs-dropdownlist>
+                                    <div *ngIf="(cPCName.invalid && (cPCName.dirty || cPCName.touched))||(cPCName.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                        <div *ngIf="cPCName.errors.required">
+                                            CPC Code is required.
+                                        </div>
+                                    </div>
+                                    <input type="hidden" formControlName="cpcCode" id="cpcCode" name="cpcCode">
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label>Material Issue Link to Workcenter ?</label>
+                                    <sup class="text-danger">*</sup>
+                                </div>
+                                <div>
+                                    <span class="align-top mr-2">No</span>
+                                    <ejs-switch (change)="Change($event)"
+                                        formControlName="isMaterialIssueLinkToWorkcenter" [value]=false
+                                        id="isMaterialIssueLinkToWorkcenter" name="isMaterialIssueLinkToWorkcenter">
+                                    </ejs-switch>
+                                    <span class="align-top ml-2">Yes</span>
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label [ngClass]="{'e-error': (workcenterName.invalid && (workcenterName.dirty || workcenterName.touched))}">Workcenter</label>
+                                    <sup class="text-danger" *ngIf="workCenterIdReq">*</sup>
+                                </div>
+                                <div>
+                                    <ejs-dropdownlist formControlName="workcenterName"
+                                        (change)="onChangeWorkCenter($event)" id="workcenterName" name="workcenterName"
+                                        [dataSource]='workCenter' placeholder="Search Workcenter"
+                                        [fields]="{text: 'workCenterName', value: 'workCenterName' }"
+                                        [allowFiltering]='true'  [required]="workCenterIdReq">
+                                    </ejs-dropdownlist>
+                                    <div *ngIf="(workcenterName.invalid && (workcenterName.dirty || workcenterName.touched))||(workcenterName.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="workcenterName.errors.required">
+                                        WorkCenter is required.
+                                    </div>
+                                </div>
+                                    <input type="hidden" formControlName="workcenterCode" id="workcenterCode"
+                                        name="workcenterCode">
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label>LOT Tracking Required For Material Issue ?</label>
+                                </div>
+                                <div>
+                                    <span class="align-top mr-2">No</span>
+                                    <ejs-switch formControlName="isLotTrackingRequired" id="isLotTrackingRequired"
+                                        name="isLotTrackingRequired"></ejs-switch>
+                                    <span class="align-top ml-2">Yes</span>
+                                </div>
+                            </div>
+                            <div class="form-group form-input-line col-6 ">
+                                <div>
+                                    <label>Material Issue By Back Flushing ?</label>
+                                </div>
+                                <div>
+                                    <span class="align-top mr-2">No</span>
+                                    <ejs-switch formControlName="isMaterialIssueByBackflushing"
+                                        id="isMaterialIssueByBackflushing" name="isMaterialIssueByBackflushing">
+                                    </ejs-switch>
+                                    <span class="align-top ml-2">Yes</span>
+
+                                    <input type="hidden" formControlName="manufacturedProductCode"
+                                        id="manufacturedProductCode" name="manufacturedProductCode">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-grid>
+        </div>
+        <div class="modal-footer">
+            <button ejs-button cssClass="e-outline" (click)="updateBOM()" [isPrimary]="true" [disabled]="bomHeaderForm.invalid">Update</button>
+            <a routerLink='/bom/maintain-bom-list'>
+                <button ejs-button cssClass="e-outline">Cancel</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            BOM Item Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-6">
+                <div> Item Name : </div>
+                <div> {{itemNameView}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div> UOM :</div>
+                <div> {{uOMNameView}} </div>
+            </div>
+            <div class="view-item col-6">
+                <div>CPC : </div>
+                <div> {{cPCNameView}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Quantity : </div>
+                <div> {{quantityView}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Latest Purchase Cost Per Unit : </div>
+                <div> {{latestPurchaseCostPerUnitView}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Moving Weighted Average Cost Per Unit : </div>
+                <div> {{movingWeightedAverageCostPerUnitView}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Standard Cost Per Unit For Cost Estimation : </div>
+                <div> {{standardCostPerUnitForCostEstimationView}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Price Variance Provision : </div>
+                <div> {{priceVarianceProvisionView}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Is Material Issue Link To Workcenter : </div>
+                <div> {{isMaterialIssueLinkToWorkcenter}}</div>
+            </div>
+            <div *ngIf="workCenterName" class="view-item col-6">
+                <div>Work Center : </div>
+                <div> {{workCenterName}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Is Lot Tracking Required : </div>
+                <div> {{isLotTrackingRequired}}</div>
+            </div>
+            <div class="view-item col-6">
+                <div>Is Material Issue By Back Flushing : </div>
+                <div> {{isMaterialIssueByBackflushing}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

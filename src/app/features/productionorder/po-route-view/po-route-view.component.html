@@ -1,0 +1,24 @@
+<div class="bg-gray-200 h5 pl-2 py-1 m-0 text-center">
+    Routing Details
+</div>
+<div class="d-flex flex-wrap">
+    <div class="view-item col-12">
+        <div>Name</div>
+        <div>{{route?.routingName}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Code</div>
+        <div>{{routeFromApi?.routingCode}}</div>
+    </div>
+    <div class="view-item col-12">
+        <div>Production Line</div>
+        <div>{{routeFromApi?.productionLineName}}</div>
+    </div>
+    <!-- <div class="view-item col-12">
+        <div>Quality Control</div>
+        <div>
+            <span *ngIf="route?.qualityControlRequired"> Yes</span>
+            <span *ngIf="!route?.qualityControlRequired" > No</span>
+        </div>
+    </div> -->
+</div>

@@ -1,0 +1,142 @@
+<div class="subheader">
+    <h1 class="subheader-title ">
+        Material Issue To Production Order
+    </h1>
+    <button [routerLink]="['/release-to-production/release-production-list/edit/'+productOrderId]"
+        class="btn btn-outline-primary btn-sm">
+        Back to RP
+        <i class="fal fa-arrow-left ml-1"></i>
+    </button>
+</div>
+<div class="card p-3">
+    <ejs-grid #grid [dataSource]='materialIssuePO' [toolbar]='toolbar' gridLines='Both' [editSettings]='editSettings'
+        (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)'>
+
+        <e-columns>
+            <e-column headerText='S.No.' width='60'>
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div> 
+                </ng-template>
+            </e-column>
+            <e-column field='batchNumber' headerText='Batch Number' isPrimaryKey='true' width='100'></e-column>
+            <e-column field='itemName' headerText='Item Name' width='100'></e-column>
+            <e-column field='itemCode' [visible]="false"></e-column>
+            <e-column field='uomCode' headerText='UOM Code' width='100'></e-column>
+            <e-column field='quantity' headerText='BOM Qty' width='100'></e-column>
+            <e-column field='issueMaterialFromName' headerText=' From Warehouse ' width='100'></e-column>
+            <e-column field='issueMaterialFromCode' [visible]="false"></e-column>
+            <e-column field='actualUOMCode' headerText='Actual UOM' width='100'></e-column>
+            <e-column field='actualQuantity' headerText='Actual Qty' width='100'></e-column>
+            <e-column field='productionOrderId' [visible]="false"></e-column>
+            <e-column headerText='Actions' width='50' [commands]='commands'></e-column>
+        </e-columns>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="materialForm">
+                <div class="d-flex flex-wrap">
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label>Item Name</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input type="hidden" formControlName="productionOrderId" id="productionOrderId"
+                                name="productionOrderId">
+                            <input type="hidden" formControlName="batchNumber" id="batchNumber" name="batchNumber">
+                            <input type="text" class="e-input" [readonly]="true" formControlName="itemName"
+                                id="itemName" name="itemName">
+                            <input type="hidden" formControlName="itemCode" id="itemCode" name="itemCode">
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label>UOM Code</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input type="text" class="e-input" [readonly]="true" formControlName="uomCode" id="uomCode"
+                                name="uomCode">
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label>BOM Qty</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-numerictextbox [readonly]="true" formControlName="quantity" id="quantity"
+                                name="quantity" class="e-input e-field" [showSpinButton]='false'>
+                            </ejs-numerictextbox>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6"  [ngClass]="{'e-error': issueMaterialFromName.invalid && (issueMaterialFromName.dirty || issueMaterialFromName.touched || submitClicked)}">
+                        <div>
+                            <label>From Warehouse</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist [dataSource]='materialIssueFrom' formControlName="issueMaterialFromName"
+                                id="issueMaterialFromName" name="issueMaterialFromName"
+                                (change)="onChangeIssueMaterialFrom($event)" placeholder="Search issue from"
+                                [fields]="{text: 'name', value: 'name' }" [allowFiltering]='true'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="issueMaterialFromName.invalid && (issueMaterialFromName.dirty || issueMaterialFromName.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="issueMaterialFromName.errors.required">
+                                        From Warehouse is required.
+                                    </div>
+                            </div>
+                            <input type="hidden" formControlName="issueMaterialFromCode" id="issueMaterialFromCode"
+                                name="issueMaterialFromCode">
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': actualUOMCode.invalid && (actualUOMCode.dirty || actualUOMCode.touched || submitClicked)}">
+                        <div>
+                            <label>Actual UOM</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist [dataSource]='uom' formControlName="actualUOMCode" id="actualUOMCode"
+                                name="actualUOMCode" placeholder="Search UOM"
+                                [fields]="{text: 'uomName', value: 'uomCode' }" [allowFiltering]='true'>
+                            </ejs-dropdownlist>
+                            <div *ngIf="actualUOMCode.invalid && (actualUOMCode.dirty || actualUOMCode.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="actualUOMCode.errors.required">
+                                        Actual UOM is required.
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': actualQuantity.invalid && (actualQuantity.dirty || actualQuantity.touched || submitClicked)}">
+                        <div>
+                            <label>Actual Qty </label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-numerictextbox formControlName="actualQuantity" id="actualQuantity"
+                                name="actualQuantity" class="e-input e-field" [showSpinButton]='false'>
+                            </ejs-numerictextbox>
+                            <div *ngIf="actualQuantity.invalid && (actualQuantity.dirty || actualQuantity.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="actualQuantity.errors.required">
+                                        Actual Qty is required.
+                                    </div>
+                                    <div *ngIf="actualQuantity.errors.max">
+                                        Actual Qty cannot be more than 6 characters.
+                                    </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ejs-grid>
+    <div class="modal-footer">
+        <button ejs-button cssClass="e-outline" (click)="updateMaterialIssueToProductOrder()"
+            [isPrimary]="true">Save</button>
+        <a routerLink='/release-to-production/release-production-list'>
+            <button ejs-button cssClass="e-outline">Cancel</button>
+        </a>
+    </div>
+</div>

@@ -1,0 +1,185 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Machine
+    </h1>
+</div>
+<ejs-grid [dataSource]='machineRoute' [editSettings]='editSettings' [toolbar]='toolbar'
+    (actionBegin)='actionBegin($event)' gridLines='Both' (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+    <e-columns>
+        <e-column headerText='S.No.' width='50'>
+            <ng-template #template let-d>
+                <div>{{ +d.index+1 }}</div>
+            </ng-template>
+        </e-column>
+        <e-column field='machineName' headerText='Machine' isPrimaryKey='true' width='100'></e-column>
+        <e-column field='costRatePerHour' headerText='Cost/Hr' width='60'></e-column>
+        <e-column field='machineHour' headerText='Machine Hrs' title="Machine hours" width='60'></e-column>
+        <e-column field='machineCost' headerText='Cost' width='60'></e-column>
+        <e-column field='idleHours' headerText='Idle Hrs' width='60' title="Idle hours"></e-column>
+        <e-column field='idleHourCost' headerText=' Idle Hr Cost' width='60'></e-column>
+        <e-column headerText='Actions' width='100' [commands]='commands'></e-column>
+    </e-columns>
+    <ng-template #editSettingsTemplate let-data>
+        <div [formGroup]="orderForm">
+            <div class="d-flex flex-wrap">
+                <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="machineName">Machine</label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <input class="e-input e-field" name='machineName' 
+                        value="{{orderForm.controls.machineCode.value}} - {{orderForm.controls.machineName.value}}" disabled type="text"/>
+                    </div>
+                </div>
+                <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="costRatePerHour" 
+                        [ngClass]="{'e-error': costRatePerHr.invalid && (costRatePerHr.dirty || costRatePerHr.touched || submitClicked)}">
+                        Cost Rate/Hr</label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <input class="e-input e-field" name='costRatePerHour' formControlName="costRatePerHour"
+                            type="number"  />
+                            <div *ngIf="costRatePerHr.invalid && (costRatePerHr.dirty || costRatePerHr.touched || submitClicked)"
+                            class="e-error d-block">
+                            <div *ngIf="costRatePerHr.errors.required">
+                                Cost Rate is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="machineHour"
+                        [ngClass]="{'e-error': machineHourCtrl.invalid && (machineHourCtrl.dirty || machineHourCtrl.touched || submitClicked)}">
+                        Machine Hour</label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <ejs-numerictextbox title="Enter number of hours the machine is operational during the production."
+                         class="e-input e-field" [showSpinButton]='false' formControlName="machineHour">
+                        </ejs-numerictextbox>
+                        <div *ngIf="machineHourCtrl.invalid && (machineHourCtrl.dirty || machineHourCtrl.touched || submitClicked)"
+                            class="e-error d-block">
+                            <div *ngIf="machineHourCtrl.errors.required">
+                                Machine Hour is required.
+                            </div>
+                            <div *ngIf="machineHourCtrl.errors.max">
+                                Machine Hour cannot be more than 6 characters.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="machineCost"
+                        [ngClass]="{'e-error': machineCostCtrl.invalid && (machineCostCtrl.dirty || machineCostCtrl.touched || submitClicked)}">
+                        Machine Cost</label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <input class="e-input e-field" name='machineCost' formControlName="machineCost" type="number"
+                            #machineCost />
+                            <div *ngIf="machineCostCtrl.invalid && (machineCostCtrl.dirty || machineCostCtrl.touched || submitClicked)"
+                            class="e-error d-block">
+                            <div *ngIf="machineCostCtrl.errors.required">
+                                Machine Cost is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="idleHours"
+                        [ngClass]="{'e-error': idleHoursCtrl.invalid && (idleHoursCtrl.dirty || idleHoursCtrl.touched || submitClicked)}">
+                        Idle Hours</label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <ejs-numerictextbox title="Enter the number of hours the machine was idle during the production."
+                         class="e-input e-field" [showSpinButton]='false' formControlName="idleHours">
+                        </ejs-numerictextbox>
+                        <div *ngIf="idleHoursCtrl.invalid && (idleHoursCtrl.dirty || idleHoursCtrl.touched || submitClicked)"
+                        class="e-error d-block">
+                        <div *ngIf="idleHoursCtrl.errors.required">
+                            Idle Hours is required.
+                        </div>
+                        <div *ngIf="idleHoursCtrl.errors.max">
+                            Idle Hours cannot be more than 6 characters.
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="form-group form-input-line col-6">
+                    <div>
+                        <label for="idleHourCost"
+                        [ngClass]="{'e-error': idleHourCostCtrl.invalid && (idleHourCostCtrl.dirty || idleHourCostCtrl.touched || submitClicked)}">
+                        Idle Hour Cost </label>
+                        <sup class="text-danger">*</sup>
+                    </div>
+                    <div>
+                        <input class="e-input e-field" name='idleHourCost' formControlName="idleHourCost" type="number"
+                            #idleHourCost />
+                            <div *ngIf="idleHourCostCtrl.invalid && (idleHourCostCtrl.dirty || idleHourCostCtrl.touched || submitClicked)"
+                            class="e-error d-block">
+                            <div *ngIf="idleHourCostCtrl.errors.required">
+                                Idle Hours Cost is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</ejs-grid>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Machine Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Task : </div>
+                <div> {{taskName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Machine Name : </div>
+                <div> {{machineName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Cost Rate Per Hour : </div>
+                <div> {{costRatePerHour}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Machine Hour : </div>
+                <div> {{machineHour}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Machine Cost : </div>
+                <div> {{machineCost}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Idle Hours :</div>
+                <div> {{idleHours}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Idle Hour Cost : </div>
+                <div>{{idleHourCost}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

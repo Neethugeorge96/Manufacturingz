@@ -1,0 +1,90 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Planned Production order
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid #grid [dataSource]='productionOrder' [toolbar]='toolbar' gridLines='Both'
+            (queryCellInfo)='queryCellInfo($event)' [editSettings]='editSettings' (actionBegin)='actionBegin($event)'
+            (commandClick)='commandClick($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width="53">
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div>
+                    </ng-template>
+                </e-column>
+                <e-column field='productionOrderNumber' headerText='Production Order No' isPrimaryKey='true'>
+                </e-column>
+                <e-column field='productionOrderDate' type="date" [format]="{ type: 'date', skeleton: 'medium' }"
+                    headerText='PO Date' width="120"></e-column>
+                <e-column field='productionItem' headerText='Production Item'></e-column>
+                <e-column field='uom' headerText='Production Uom'></e-column>
+                <e-column field='productionQuantity' headerText='Production Qty' width="130"></e-column>
+                <e-column field='batchSize' headerText='Batches' width="80"></e-column>
+                <e-column field='status' headerText='Status' >
+                    <ng-template #template let-d>
+                        <div>
+                            <span class="e-badge e-badge-rejected" *ngIf="d.status === 1">Planned</span>
+                            <span class="e-badge e-badge-draft" *ngIf="d.status === 2">Release To Production</span>
+                            <span class="e-badge e-badge-pending" *ngIf="d.status === 3">In Progress</span>
+                            <span class="e-badge e-badge-approved" *ngIf="d.status === 4">Completed</span>
+                        </div>
+                    </ng-template>
+                </e-column>
+                <e-column headerText='Actions' [commands]='commands' width="220"></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            View Production Order Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+
+
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div>Production Order No :</div>
+                <div> {{POforView?.productionOrderNumber}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>PO Date : </div>
+                <div> {{POforView?.productionOrderDate| date:'mediumDate'}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Production Item : </div>
+                <div> {{POforView?.productionItem }} - {{POforView?.productionCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Uom :</div>
+                <div> {{POforView?.uom}} </div>
+            </div>
+
+            <div class="view-item col-12">
+                <div>Quantity : </div>
+                <div>{{POforView?.productionQuantity}} </div>
+
+            </div>
+            <div class="view-item col-12">
+                <div>Batch Size : </div>
+                <div>{{POforView?.batchSize}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>

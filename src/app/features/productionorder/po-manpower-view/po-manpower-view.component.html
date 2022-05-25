@@ -1,0 +1,102 @@
+<div>
+    <div class="bg-gray-200 h5 pl-2 py-1 m-0">
+        Manpowers
+    </div>
+    <ejs-grid [dataSource]='mappedList' [editSettings]='editSettings' [toolbar]='toolbar'
+        (actionBegin)='actionBegin($event)' (actionComplete)='actionComplete($event)' gridLines='Both'>
+        <e-columns>
+            <e-column headerText='S.No.' width='30' [allowEditing]="false">
+                <ng-template #template let-d>
+                    <div>{{ +d.index+1 }}</div>
+                </ng-template>
+            </e-column>
+            <e-column field='manpowerCategory' headerText='Category' isPrimaryKey='true'></e-column>
+            <e-column field='noOfResources' headerText='No. of Resources'></e-column>
+            <e-column field='costPerHour' headerText='Cost Rate/Hr'></e-column>
+            <e-column field='currencyCode' headerText='Currency'></e-column>
+            <e-column headerText='Actions' [commands]='commands'></e-column>
+        </e-columns>
+        <e-aggregates>
+            <e-aggregate>
+                <e-columns>
+                    <e-column type="sum" field="costPerHour">
+                        <ng-template #footerTemplate let-data>
+                            <span>
+                                <span class="fs-b">Total:</span>
+                                <span class="float-right font-weight-bold">{{data.sum}}</span>
+                            </span>
+                        </ng-template>
+                    </e-column>
+                </e-columns>
+            </e-aggregate>
+        </e-aggregates>
+        <ng-template #editSettingsTemplate let-data>
+            <div [formGroup]="manpowerForm">
+                <div class="d-flex flex-wrap align-items-center">
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': (manpowerCategory.invalid && (manpowerCategory.dirty || manpowerCategory.touched))}">
+                        <div>
+                            <label for="machineId">Manpower Category</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-dropdownlist id='atcelement' formControlName="manpowerCategoryCode"
+                                name='manpowerCategoryCode' #manpowerCategoryCode [dataSource]='manpowers' [fields]='fields'
+                                [allowFiltering]='true' placeholder="Search manpower category" (change)="checkDuplication($event)">
+                            </ejs-dropdownlist>
+                            <div *ngIf="(manpowerCategory.invalid && (manpowerCategory.dirty || manpowerCategory.touched))||(manpowerCategory.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="manpowerCategory.errors.required">
+                                        Manpower Category is required.
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6" [ngClass]="{'e-error': (noOfResources.invalid && (noOfResources.dirty || noOfResources.touched))}">
+                        <div>
+                            <label for="noOfResources">No of resources</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <ejs-numerictextbox class="e-input " id="noOfResources" name="noOfResources"
+                                [showSpinButton]='false' formControlName="noOfResources">
+                            </ejs-numerictextbox>
+                            <div *ngIf="(manpowerCategory.invalid && (noOfResources.dirty || noOfResources.touched))||(noOfResources.invalid&& submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="noOfResources.errors.required">
+                                        No of resources is required.
+                                    </div>
+                                    <div *ngIf="noOfResources.errors.max">
+                                        Maximum 10 characters are allowed
+                                    </div>
+                                    <div *ngIf="noOfResources.errors.min">
+                                        Minimum 1 Resource needed 
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="costPerHour">Cost Rate/Hr</label>
+                            <sup class="text-danger">*</sup>
+                        </div>
+                        <div>
+                            <input class="e-input" formControlName="costPerHour" id="costPerHour" name="costPerHour"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="form-group form-input-line col-6">
+                        <div>
+                            <label for="currencyCode">Currency</label>
+                            <!-- <sup class="text-danger">*</sup> -->
+                        </div>
+                        <div>
+                            <input class="e-input" formControlName="currencyCode" id="currencyCode" name="currencyCode"
+                                type="text">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+    </ejs-grid>
+</div>

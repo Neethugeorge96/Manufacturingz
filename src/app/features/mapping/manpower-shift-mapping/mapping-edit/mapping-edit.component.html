@@ -1,0 +1,105 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Manpower To Shift</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div>
+        <div class="form-group form-input-line col-6">
+            <div class="justify-content-start">
+                <label for="machineId">Shift Code</label>
+                <sup class="text-danger">*</sup>
+            </div>
+            <div>
+                <ejs-dropdownlist id='atcelement' name='machineId' #machineId [(ngModel)]="shift"
+                    [disabled]="shiftDetails" [dataSource]='productionShifts' [fields]='shiftFields'
+                    [allowFiltering]='true' placeholder="Search a Shift" [itemTemplate]="shCode"
+                    [valueTemplate]="shCode">
+                    <ng-template #shCode let-data>
+                        <span>{{data.shiftCode}}</span> -
+                        <span class="fs-sm">{{data.shiftName}} </span>
+                    </ng-template>
+                </ejs-dropdownlist>
+            </div>
+        </div>
+    </div>
+    <ejs-grid #grid [dataSource]='manpowerToShift' [editSettings]='editSettings' [toolbar]='toolbar'
+        (actionBegin)='actionBegin($event)' gridLines='Both' [searchSettings]='searchOptions'
+        (queryCellInfo)='queryCellInfo($event)'>
+        <e-columns>
+            <e-column field='manpowerCategoryCode' [valueAccessor]='getCategory' headerText='Manpower Category'
+                width="120"></e-column>
+            <e-column field='manpowerCode' [valueAccessor]='getManpower' headerText='Manpower' width="120"></e-column>
+            <e-column headerText='Actions' [commands]='commands' width="60">
+            </e-column>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="addForm">
+                    <table class="e-table e-inline-edit" cellspacing="0.25">
+                        <colgroup>
+                            <col width="120">
+                            <col width="120">
+                            <col width="60">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: right" class='e-rowcell'>
+                                    <ejs-dropdownlist name="manpowerCategoryCode" formControlName="manpowerCategoryCode"
+                                        [allowFiltering]='true' placeholder="Search a Category" popupHeight='150px'
+                                        [fields]="{text: 'categoryName', value: 'id'}" [dataSource]='manPowerCategories'
+                                        [itemTemplate]="optionTemplate" [valueTemplate]="optionTemplate">
+                                        <ng-template #optionTemplate let-data>
+                                            <div *ngIf="data">
+                                                <span>{{data.categoryCode}}</span> -
+                                                <span class="fs-sm">{{data.categoryName}} </span>
+                                            </div>
+                                        </ng-template>
+                                    </ejs-dropdownlist>
+                                </td>
+                                <td style="text-align: right" class='e-rowcell'>
+                                    <ejs-dropdownlist name="manpowerCode" placeholder="Search Manpower"
+                                        formControlName="manpowerCode"
+                                        [fields]="{text: 'manpowerName', value: 'manpowerCode'}" [allowFiltering]='true'
+                                        popupHeight='150px' [dataSource]='manpowerByCategory'
+                                        [itemTemplate]="manpowerTemplate" [valueTemplate]="manpowerTemplate">
+                                        <ng-template #manpowerTemplate let-data>
+                                            <span>{{data?.manpowerCode}}</span> -
+                                            <span class="fs-sm">{{data?.manpowerName}} </span>
+                                        </ng-template>
+                                    </ejs-dropdownlist>
+                                </td>
+                                <td style="text-align: right" class="e-rowcell e-unboundcell">
+                                    <ng-template #template let-d>
+                                        <!-- <div>{{ +d.index+1 }}</div> -->
+
+                                        <div class="e-unboundcelldiv">
+                                            <button type="button" title="Update"
+                                                class=" e-lib e-btn e-control e-flat e-icon-btn e-save-cancel e-savebutton"
+                                                (click)="rowSave()">
+                                                <span class="e-btn-icon e-icons e-update"></span>
+                                            </button>
+                                            <button type="button" title="Cancel"
+                                                class="e-lib e-btn e-control e-flat e-icon-btn e-save-cancel e-cancelbutton"
+                                                (click)="rowEditCancel()">
+                                                <span class="e-btn-icon e-icons e-cancel-icon"></span>
+                                            </button>
+                                        </div>
+                                    </ng-template>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </e-columns>
+    </ejs-grid>
+
+</div>
+<div class="modal-footer">
+    <button type="submit" (click)="submit()" class="btn btn-sm btn-primary"> Save</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary border-0" (click)="activeModal.close('Close click')">
+        Cancel
+    </button>
+
+</div>

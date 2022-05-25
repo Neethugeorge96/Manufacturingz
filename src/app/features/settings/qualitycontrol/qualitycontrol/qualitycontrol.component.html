@@ -1,0 +1,175 @@
+<div class="subheader">
+    <h1 class="subheader-title">
+        Quality Control Details
+    </h1>
+</div>
+<div class="card p-3">
+    <div>
+        <ejs-grid [dataSource]='qcData' [editSettings]='editSettings' gridLines='Both' [toolbar]='toolbar'
+            (queryCellInfo)='queryCellInfo($event)' (actionBegin)='actionBegin($event)' gridLines='Both'
+            (commandClick)='commandClick($event)' (actionComplete)='actionComplete($event)'>
+            <e-columns>
+                <e-column headerText='S.No.' width='45'>
+                    <ng-template #template let-d>
+                        <div>{{ +d.index+1 }}</div> 
+                    </ng-template>
+                </e-column>
+                <e-column field='qcnUmber' headerText='Code' isPrimaryKey='true' width='100'></e-column>
+                <e-column field='qcName' headerText='Operation Name' width='120'></e-column>
+                <e-column field='qcType' [valueAccessor]='getQCTypeName' headerText='QC Type' width='150'></e-column>
+                <e-column field='frequency' headerText='Frequency' width='150'></e-column>
+
+                <e-column headerText='Check List Required' width='150'>
+                    <ng-template #template let-d>
+                        <div><span *ngIf="d.isCheckListRequired">YES</span></div>
+                        <div><span *ngIf="!d.isCheckListRequired">NO</span></div>
+                    </ng-template>
+                </e-column>
+                <e-column field='remarks' headerText='Remarks' width='150'></e-column>
+                <e-column headerText='Actions' width=120 [commands]='commands'></e-column>
+            </e-columns>
+            <ng-template #editSettingsTemplate let-data>
+                <div [formGroup]="qualityControlForm">
+                    <div class="d-flex flex-wrap">
+                        <div class="form-group form-input-line col-6"> 
+                            <div>
+                                <label for="qcnUmber">Code</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class="e-input" formControlName="qcnUmber">
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': qcName.invalid && (qcName.dirty || qcName.touched || submitClicked)}" >
+                            <div>
+                                <label for="qcName">Operation Name</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <input type="text" class="e-input" formControlName="qcName">
+                                <div *ngIf="qcName.invalid && (qcName.dirty || qcName.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="qcName.errors.duplicate">
+                                        Name already exists.
+                                    </div>
+                                    <div *ngIf="qcName.errors.required">
+                                        Name is required.
+                                    </div>
+                                    <div *ngIf="qcName.errors.maxlength">
+                                        Name cannot be more than 32 characters.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': qcType.invalid && (qcType.dirty || qcType.touched || submitClicked)}">
+                            <div>
+                                <label for="qcType">QC Type</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist formControlName="qcType" [dataSource]='qcTypes'
+                                    [fields]='{text: "text", value: "value"}' placeholder="Select Type" [fields]=""
+                                    [allowFiltering]='true'>
+                                </ejs-dropdownlist>
+                                <div *ngIf="qcType.invalid && (qcType.dirty || qcType.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="qcType.errors.required">
+                                        Type is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6" [ngClass]="{'e-error': frequency.invalid && (frequency.dirty || frequency.touched || submitClicked)}">
+                            <div>
+                                <label for="frequency">Frequency</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-dropdownlist formControlName="frequency" [dataSource]='frequencyData'
+                                    placeholder="Select Frequency" [fields]="" [allowFiltering]='true'
+                                    [fields]="{text: 'value', value: 'id' }">
+                                </ejs-dropdownlist>
+                                <div *ngIf="frequency.invalid && (frequency.dirty || frequency.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="frequency.errors.required">
+                                        Frequency is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-6 ">
+                            <div>
+                                <label for="isCheckListRequired">Check List Required</label>
+                                <sup class="text-danger">*</sup>
+                            </div>
+                            <div>
+                                <ejs-switch id="checked" class="e-input" formControlName="isCheckListRequired">
+                                </ejs-switch>
+                            </div>
+                        </div>
+                        <div class="form-group form-input-line col-12 " [ngClass]="{'e-error': remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)}">
+                            <div>
+                                <label for="remarks">Remarks</label>
+                            </div>
+                            <div>
+                                <textarea type="text" class="e-input" formControlName="remarks"></textarea>
+                                <div *ngIf="remarks.invalid && (remarks.dirty || remarks.touched || submitClicked)"
+                                    class="e-error d-block">
+                                    <div *ngIf="remarks.errors.maxlength">
+                                        Remarks cannot be more than 128 characters.
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ejs-grid>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            Quality Control Details
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">
+                ×
+            </span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="d-flex flex-wrap">
+            <div class="view-item col-12">
+                <div> Code :</div>
+                <div> {{QcCode}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div> Operation Name : </div>
+                <div> {{QcName}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>QC Type : </div>
+                <div> {{QcType}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Frequency :</div>
+                <div> {{Frequency}}</div>
+            </div>
+            <div class="view-item col-12">
+                <div>Check List Required : </div>
+                <div>{{Required}} </div>
+            </div>
+            <div class="view-item col-12">
+                <div>Remarks : </div>
+                <div>{{Remarks}} </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-secondary m-0" (click)="modal.dismiss('Cross click')">
+            Cancel
+        </button>
+    </div>
+</ng-template>
